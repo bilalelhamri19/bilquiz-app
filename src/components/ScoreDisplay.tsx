@@ -1,6 +1,4 @@
 
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import { motion } from "framer-motion";
 import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
@@ -13,6 +11,11 @@ interface ScoreDisplayProps {
 
 const ScoreDisplay = ({ score, total, language }: ScoreDisplayProps) => {
   const percentage = (score / total) * 100;
+  const radius = 28;
+  const strokeWidth = 6;
+  const normalizedRadius = radius - strokeWidth / 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
     <motion.div
@@ -20,19 +23,41 @@ const ScoreDisplay = ({ score, total, language }: ScoreDisplayProps) => {
       animate={{ scale: 1, opacity: 1 }}
       className="flex items-center gap-4 mb-6"
     >
-      <div className="w-14 h-14">
-        <CircularProgressbar
-          value={percentage}
-          text={`${score}`}
-          styles={buildStyles({
-            textSize: "30px",
-            pathColor: `rgba(99, 102, 241, ${percentage / 100})`,
-            textColor: "#6366f1",
-            trailColor: "#eef2ff",
-          })}
-        />
+      <div className="w-14 h-14 flex items-center justify-center">
+        <svg className="w-full h-full" viewBox="0 0 64 64">
+          <circle
+            cx="32"
+            cy="32"
+            r={normalizedRadius}
+            stroke="#e5e7eb"
+            strokeWidth={strokeWidth}
+            fill="transparent"
+          />
+          <circle
+            cx="32"
+            cy="32"
+            r={normalizedRadius}
+            stroke="#6366f1"
+            strokeWidth={strokeWidth}
+            fill="transparent"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform="rotate(-90 32 32)"
+          />
+          <text
+            x="50%"
+            y="50%"
+            dominantBaseline="middle"
+            textAnchor="middle"
+            className="text-xs font-black"
+            fill="#6366f1"
+          >
+            {Math.round(percentage)}%
+          </text>
+        </svg>
       </div>
-      <div className="text-muted-foreground">{ui[language].outOf(score, total)}</div>
+      <div className="text-white/50 text-sm">{ui[language].outOf(score, total)}</div>
     </motion.div>
   );
 };
