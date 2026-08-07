@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { Lock, CheckCircle, Star, ChevronLeft } from "lucide-react";
+import { getStars } from "@/lib/scoring";
 
 export interface GroupInfo {
   index: number;
@@ -14,19 +15,12 @@ export interface GroupInfo {
 interface GroupSelectProps {
   groups: GroupInfo[];
   onSelectGroup: (groupIndex: number) => void;
+  dir?: "rtl" | "ltr";
 }
 
-const getStars = (score: number, total: number) => {
-  const pct = (score / total) * 100;
-  if (pct >= 90) return 3;
-  if (pct >= 60) return 2;
-  if (pct >= 30) return 1;
-  return 0;
-};
-
-const GroupSelect = ({ groups, onSelectGroup }: GroupSelectProps) => {
+const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) => {
   return (
-    <div dir="rtl" className="w-full max-w-2xl mx-auto px-2">
+    <div dir={dir} className="w-full max-w-2xl mx-auto px-2">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

@@ -13,7 +13,6 @@ import { useToast } from "@/components/ui/use-toast";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 15;
-const language: Language = "ar";
 const STORAGE_KEY = "bilquiz_progress";
 
 // Split riddles into groups of 15
@@ -31,6 +30,10 @@ interface Progress {
 }
 
 const loadProgress = (): Progress => {
+  if (typeof window === "undefined") {
+    return { unlockedGroups: [0], completedGroups: {} };
+  }
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
@@ -39,19 +42,27 @@ const loadProgress = (): Progress => {
 };
 
 const saveProgress = (p: Progress) => {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {}
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  } catch {}
 };
 
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("welcome");
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState<Progress>(loadProgress);
+  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {} });
+  const [hasMounted, setHasMounted] = useState(false);
 
   // Current session
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [questionInGroup, setQuestionInGroup] = useState(0);
   const [groupScore, setGroupScore] = useState(0);
+
+  const dir = "rtl";
+  const language: Language = "ar";
 
   const { toast } = useToast();
   const t = ui[language];
@@ -61,6 +72,12 @@ const Index = () => {
   const totalGroups = allGroups.length;
 
   useEffect(() => {
+    if (!hasMounted) return;
+    saveProgress(progress);
+  }, [progress, hasMounted]);
+
+  useEffect(() => {
+    setHasMounted(true);
     const timer = window.setTimeout(() => setIsLoading(false), 1800);
     return () => window.clearTimeout(timer);
   }, []);
@@ -68,7 +85,7 @@ const Index = () => {
   // Build GroupInfo array for the selector
   const groupInfos: GroupInfo[] = allGroups.map((grp, i) => ({
     index: i,
-    label: `المجموعة ${i + 1}`,
+    label: t.groupOf(i + 1, totalGroups),
     questionCount: grp.length,
     isUnlocked: progress.unlockedGroups.includes(i),
     isCompleted: i in progress.completedGroups,
@@ -123,7 +140,6 @@ const Index = () => {
         newProgress.unlockedGroups.push(nextGroup);
       }
 
-      saveProgress(newProgress);
       setProgress(newProgress);
       setGroupScore(score);
       setAppState("groupResult");
@@ -139,7 +155,7 @@ const Index = () => {
   if (isLoading) return <LoadingScreen />;
 
   return (
-    <div dir="rtl" className="bg-app min-h-screen relative overflow-hidden">
+    <div dir={dir} className="bg-app min-h-screen relative overflow-hidden">
       {/* Ambient orbs */}
       <div className="orb orb-1" />
       <div className="orb orb-2" />
@@ -256,6 +272,7 @@ const Index = () => {
                   score={groupScore}
                   total={currentGroupQuestions.length}
                   isLastGroup={currentGroupIndex === totalGroups - 1}
+                  dir={dir}
                   onNextGroup={() => startGroup(currentGroupIndex + 1)}
                   onBackToGroups={() => setAppState("groupSelect")}
                   onReplayGroup={() => startGroup(currentGroupIndex)}

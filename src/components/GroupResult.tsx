@@ -3,30 +3,26 @@ import { motion } from "framer-motion";
 import { Star, RotateCcw, ChevronLeft, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
+import { getStars } from "@/lib/scoring";
 
 interface GroupResultProps {
   groupIndex: number;
   score: number;
   total: number;
   isLastGroup: boolean;
+  dir?: "rtl" | "ltr";
   onNextGroup: () => void;
   onBackToGroups: () => void;
   onReplayGroup: () => void;
 }
 
-const getStars = (score: number, total: number) => {
-  const pct = (score / total) * 100;
-  if (pct >= 90) return 3;
-  if (pct >= 60) return 2;
-  if (pct >= 30) return 1;
-  return 0;
-};
 
 const GroupResult = ({
   groupIndex,
   score,
   total,
   isLastGroup,
+  dir = "rtl",
   onNextGroup,
   onBackToGroups,
   onReplayGroup,
@@ -54,7 +50,7 @@ const GroupResult = ({
 
   return (
     <motion.div
-      dir="rtl"
+      dir={dir}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className="w-full max-w-md mx-auto text-center"

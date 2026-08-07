@@ -1,13 +1,10 @@
 node_modules
 .next
-out
 dist
-.DS_Store
+out
+yarn.lock
 *.log
 .env
 .env.local
-next-env.d.ts
-.turbo
 .vercel
-yarn.lock
 coverage

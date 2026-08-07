@@ -38,11 +38,13 @@ const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l
 
 const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) => {
   const [showHint, setShowHint] = useState(false);
+  const [currentHintIndex, setCurrentHintIndex] = useState(0);
+  const [hintUsageCount, setHintUsageCount] = useState(0);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const t = ui[language];
   const content = riddle.translations[language];
-  const dir = "rtl";
+  const dir = language === "ar" ? "rtl" : "ltr";
   const primaryAnswer = content.answers[0];
 
   // Letter grid state
@@ -65,6 +67,9 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
   useEffect(() => {
     setSelected([]);
     setIsCorrect(null);
+    setShowHint(false);
+    setCurrentHintIndex(0);
+    setHintUsageCount(0);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
     const answerChars = Array.from(cleanAnswer);
@@ -101,7 +106,8 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
   const checkAnswer = (currentSelection: { char: string; poolIndex: number }[]) => {
     const answerString = currentSelection.map((s) => s.char).join("");
     const allAnswers = Object.values(riddle.translations).flatMap((tr) => tr.answers);
-    const isAnswerCorrect = allAnswers.some(
+    const answers = content.answers;
+    const isAnswerCorrect = answers.some(
       (a) => normalizeForCompare(a) === normalizeForCompare(answerString)
     );
 
@@ -153,7 +159,8 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
 
   const showRiddleHint = () => {
     setShowHint(true);
-    toast({ title: "تلميح 💡", description: content.hint });
+    setCurrentHintIndex((current) => Math.min(current + 1, hintVariants.length - 1));
+    setHintUsageCount((count) => count + 1);
   };
 
   const getGridColsClass = (length: number) => {
@@ -267,10 +274,11 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
               <button
                 type="button"
                 onClick={showRiddleHint}
-                className="btn-ghost-dark w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold"
+                disabled={currentHintIndex >= hintVariants.length - 1}
+                className="btn-ghost-dark w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold disabled:opacity-40 disabled:pointer-events-none"
               >
                 <HelpCircle size={16} />
-                {t.hint}
+                {showHint ? `تلميح ${currentHintIndex + 1} من ${hintVariants.length}` : t.hint}
               </button>
             </div>
 
@@ -286,14 +294,12 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
                 >
                   <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-3">
                     <p className="text-amber-400 text-sm font-bold flex items-center gap-2">
-                      💡 التلميحات
+                      💡 {hintVariants[currentHintIndex].label}
                     </p>
-                    {hintVariants.map((variant) => (
-                      <div key={variant.label} className="flex items-start gap-3">
-                        <span className="text-white/40 text-xs mt-0.5 flex-shrink-0">{variant.label}:</span>
-                        <span className="text-white/70 text-sm">{variant.text}</span>
-                      </div>
-                    ))}
+                    <p className="text-white/70 text-sm">{hintVariants[currentHintIndex].text}</p>
+                    <p className="text-white/40 text-xs">
+                      تم استخدام التلميح {hintUsageCount} مرة{hintUsageCount === 1 ? "" : "/مرات"}
+                    </p>
                   </div>
                 </motion.div>
               )}

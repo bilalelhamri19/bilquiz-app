@@ -1,5 +1,5 @@
 
-import { Button } from "@/components/ui/button";
+
 import { motion } from "framer-motion";
 import { Brain, Zap, Globe, Trophy } from "lucide-react";
 import { Language } from "@/data/riddles";
