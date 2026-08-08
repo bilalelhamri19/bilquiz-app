@@ -32,13 +32,20 @@ type AppState = "welcome" | "groupSelect" | "quiz" | "groupResult";
 interface Progress {
   unlockedGroups: number[];            // group indices that are unlocked
   completedGroups: Record<number, number>; // groupIndex → best score
+  inProgressGroups: Record<number, GroupSession>;
   coins: number;
   lastGroupIndex: number;
 }
 
+interface GroupSession {
+  resolvedQuestionIndexes: number[];
+  score: number;
+  activeQuestionIndex: number;
+}
+
 const loadProgress = (): Progress => {
   if (typeof window === "undefined") {
-    return { unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 };
+    return { unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 };
   }
 
   try {
@@ -59,6 +66,37 @@ const loadProgress = (): Progress => {
         })
       ) as Record<number, number>;
 
+      const inProgressGroups = Object.fromEntries(
+        Object.entries(saved.inProgressGroups ?? {}).flatMap(([index, session]) => {
+          const groupIndex = Number(index);
+          const questionCount = allGroups[groupIndex]?.length;
+          const resolvedQuestionIndexes = Array.isArray(session?.resolvedQuestionIndexes)
+            ? [...new Set(session.resolvedQuestionIndexes)].filter(
+                (questionIndex): questionIndex is number =>
+                  Number.isInteger(questionIndex) && questionIndex >= 0 && questionIndex < questionCount
+              )
+            : [];
+
+          const isValid =
+            Number.isInteger(groupIndex) &&
+            questionCount !== undefined &&
+            resolvedQuestionIndexes.length > 0 &&
+            resolvedQuestionIndexes.length < questionCount &&
+            typeof session?.score === "number" &&
+            Number.isInteger(session.score) &&
+            session.score >= 0 &&
+            session.score <= resolvedQuestionIndexes.length &&
+            Number.isInteger(session.activeQuestionIndex) &&
+            session.activeQuestionIndex >= 0 &&
+            session.activeQuestionIndex < questionCount &&
+            !resolvedQuestionIndexes.includes(session.activeQuestionIndex);
+
+          return isValid
+            ? [[groupIndex, { resolvedQuestionIndexes, score: session.score, activeQuestionIndex: session.activeQuestionIndex }]]
+            : [];
+        })
+      ) as Record<number, GroupSession>;
+
       // Rebuild unlocks from passed groups so progress created before the
       // six-correct-answer rule cannot keep later groups unlocked.
       const unlockedGroups = [0];
@@ -69,6 +107,7 @@ const loadProgress = (): Progress => {
       return {
         unlockedGroups,
         completedGroups,
+        inProgressGroups,
         coins:
           typeof saved.coins === "number" && Number.isFinite(saved.coins)
             ? Math.max(0, Math.floor(saved.coins))
@@ -82,7 +121,7 @@ const loadProgress = (): Progress => {
       };
     }
   } catch {}
-  return { unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 };
+  return { unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 };
 };
 
 const saveProgress = (p: Progress) => {
@@ -97,7 +136,7 @@ const saveProgress = (p: Progress) => {
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("groupSelect");
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 });
+  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
@@ -148,10 +187,17 @@ const Index = () => {
 
   // ── Handlers ────────────────────────────────────────────────────────────
   const startGroup = (groupIndex: number) => {
+    const groupQuestions = allGroups[groupIndex] ?? [];
+    const savedSession = progress.inProgressGroups[groupIndex];
+    const resolvedQuestionIndexes = new Set(savedSession?.resolvedQuestionIndexes ?? []);
+    const nextQuestionIndex = savedSession
+      ? savedSession.activeQuestionIndex
+      : groupQuestions.findIndex((_, index) => !resolvedQuestionIndexes.has(index));
+
     setCurrentGroupIndex(groupIndex);
-    setQuestionInGroup(0);
-    setGroupScore(0);
-    setResolvedQuestions(new Set());
+    setQuestionInGroup(nextQuestionIndex >= 0 ? nextQuestionIndex : 0);
+    setGroupScore(savedSession?.score ?? 0);
+    setResolvedQuestions(resolvedQuestionIndexes);
     setIsQuestionTransitioning(false);
     setProgress((current) => ({ ...current, lastGroupIndex: groupIndex }));
     setAppState("quiz");
@@ -211,15 +257,33 @@ const Index = () => {
       return;
     }
 
-    setQuestionInGroup((resolvedIndex + 1 + nextQuestion) % currentGroupQuestions.length);
+    const nextQuestionIndex = (resolvedIndex + 1 + nextQuestion) % currentGroupQuestions.length;
+    setQuestionInGroup(nextQuestionIndex);
+    setProgress((current) => ({
+      ...current,
+      inProgressGroups: {
+        ...current.inProgressGroups,
+        [currentGroupIndex]: {
+          resolvedQuestionIndexes: Array.from(nextResolvedQuestions),
+          score,
+          activeQuestionIndex: nextQuestionIndex,
+        },
+      },
+    }));
   };
 
   const completeGroup = useCallback(
     (score: number) => {
       setProgress((current) => {
+        const inProgressGroups = Object.fromEntries(
+          Object.entries(current.inProgressGroups).filter(
+            ([index]) => Number(index) !== currentGroupIndex
+          )
+        ) as Record<number, GroupSession>;
         const newProgress: Progress = {
           ...current,
           unlockedGroups: [...current.unlockedGroups],
+          inProgressGroups,
           completedGroups:
             score >= MIN_SCORE_TO_UNLOCK_GROUP
               ? {
