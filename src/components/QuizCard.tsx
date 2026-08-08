@@ -34,6 +34,8 @@ const normalize = (value: string) =>
 const normalizeForCompare = (value: string) =>
   normalize(value).replace(/\s+/g, "");
 
+const isNumeric = (value: string) => /^\d+$/.test(value);
+
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
 const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
@@ -217,13 +219,15 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
             <div className="flex items-center justify-between mb-4">
               <div className="glass rounded-full px-3 py-1.5 flex items-center gap-1.5 text-amber-300" aria-label={`${coins} coins`}>
                 <Coins size={16} fill="currentColor" />
-                <span className="font-bold text-sm">{coins}</span>
+                <bdi dir="ltr" className="font-bold text-sm">{coins}</bdi>
               </div>
               <div className="flex items-center gap-3">
                 <div className={`text-sm font-bold px-2.5 py-1 rounded-lg transition-colors ${timeLeft <= 5 ? "bg-red-500/20 text-red-400 animate-pulse" : "bg-white/10 text-white/70"}`}>
-                  ⏳ {timeLeft} ث
+                  ⏳ <bdi dir="ltr">{timeLeft}</bdi> ث
                 </div>
-                <span className="text-white/40 text-sm font-medium">سؤال #{riddle.id}</span>
+                <span className="text-white/40 text-sm font-medium">
+                  سؤال <bdi dir="ltr">{riddle.id}</bdi>
+                </span>
               </div>
             </div>
             <h3 className="text-2xl font-bold text-white leading-relaxed">
@@ -236,9 +240,9 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
           <div className="p-6 space-y-6">
             {/* Answer Slots Display */}
             <div className="flex flex-wrap justify-center gap-6 py-2">
-              {wordSlots.map((word, wordIdx) => (
-                <div key={wordIdx} className="flex gap-1.5">
-                  {word.map((slotIndex) => {
+              {wordSlots.map((slots, wordIdx) => (
+                <div key={wordIdx} dir={isNumeric(words[wordIdx]) ? "ltr" : undefined} className="flex gap-1.5">
+                  {slots.map((slotIndex) => {
                     const selectedItem = selected[slotIndex];
                     return (
                       <button

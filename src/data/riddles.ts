@@ -271,43 +271,45 @@ const baseRiddles: Riddle[] = [
   },
 ];
 
+const ltrNumber = (value: number) => `\u2066${value}\u2069`;
+
 const numericTemplates = [
   {
     en: (n: number) => `What comes after ${n}?`,
-    ar: (n: number) => `كم يأتي بعد ${n}؟`,
+    ar: (n: number) => `كم يأتي بعد ${ltrNumber(n)}؟`,
     fr: (n: number) => `Quel nombre vient après ${n} ?`,
     es: (n: number) => `¿Qué número viene después de ${n}?`,
-    hintAr: (n: number) => `هو العدد الذي يلي ${n}`,
+    hintAr: (n: number) => `هو العدد الذي يلي ${ltrNumber(n)}`,
     hintEn: (n: number) => `It is the number after ${n}.`,
     hintFr: (n: number) => `C'est le nombre qui suit ${n}.`,
     hintEs: (n: number) => `Es el número que viene después de ${n}.`,
   },
   {
     en: (n: number) => `What number comes before ${n + 2}?`,
-    ar: (n: number) => `ما هو العدد الذي يسبق ${n + 2}؟`,
+    ar: (n: number) => `ما هو العدد الذي يسبق ${ltrNumber(n + 2)}؟`,
     fr: (n: number) => `Quel nombre vient avant ${n + 2} ?`,
     es: (n: number) => `¿Qué número viene antes de ${n + 2}?`,
-    hintAr: (n: number) => `هو العدد الذي يسبق ${n + 2}`,
+    hintAr: (n: number) => `هو العدد الذي يسبق ${ltrNumber(n + 2)}`,
     hintEn: (n: number) => `It's one less than ${n + 2}.`,
     hintFr: (n: number) => `C'est un de moins que ${n + 2}.`,
     hintEs: (n: number) => `Es uno menos que ${n + 2}.`,
   },
   {
     en: (n: number) => `Add one to ${n}. What number do you get?`,
-    ar: (n: number) => `أضف واحدًا إلى ${n}. ما العدد؟`,
+    ar: (n: number) => `أضف واحدًا إلى ${ltrNumber(n)}. ما العدد؟`,
     fr: (n: number) => `Ajoute un à ${n}. Quel nombre obtiens-tu ?`,
     es: (n: number) => `Suma uno a ${n}. ¿Qué número obtienes?`,
-    hintAr: (n: number) => `إنه العدد بعد إضافة واحد إلى ${n}`,
+    hintAr: (n: number) => `إنه العدد بعد إضافة واحد إلى ${ltrNumber(n)}`,
     hintEn: (n: number) => `It's one more than ${n}.`,
     hintFr: (n: number) => `C'est un de plus que ${n}.`,
     hintEs: (n: number) => `Es uno más que ${n}.`,
   },
   {
     en: (n: number) => `If you have ${n} apples and get one more, how many apples do you have?`,
-    ar: (n: number) => `إذا كان لديك ${n} تفاحة وأضفت واحدة، كم يصبح العدد؟`,
+    ar: (n: number) => `إذا كان لديك ${ltrNumber(n)} تفاحة وأضفت واحدة، كم يصبح العدد؟`,
     fr: (n: number) => `Si tu as ${n} pommes et en reçois une de plus, combien en as-tu ?`,
     es: (n: number) => `Si tienes ${n} manzanas y recibes una más, ¿cuántas tienes?`,
-    hintAr: (n: number) => `أضف التفاحة الإضافية إلى ${n}`,
+    hintAr: (n: number) => `أضف التفاحة الإضافية إلى ${ltrNumber(n)}`,
     hintEn: (n: number) => `Add one apple to ${n}.`,
     hintFr: (n: number) => `Ajoute une pomme à ${n}.`,
     hintEs: (n: number) => `Suma una manzana a ${n}.`,
