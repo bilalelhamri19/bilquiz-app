@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Settings, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -549,7 +550,10 @@ const Index = () => {
 
         {/* ── Footer ── */}
         <footer className="text-center py-4 text-white/20 text-sm border-t border-white/5">
-          BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال
+          <div>BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال</div>
+          <Link href="/privacy" className="mt-1 inline-block text-white/35 underline-offset-4 hover:text-emerald-300 hover:underline">
+            سياسة الخصوصية
+          </Link>
         </footer>
       </div>
 
