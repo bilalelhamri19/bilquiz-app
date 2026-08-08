@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Lock, CheckCircle, Star, ChevronLeft, ChevronDown, ChevronRight } from "lucide-react";
 import { getStars } from "@/lib/scoring";
 
-const BATCH_SIZE = 6;
+const BATCH_SIZE = 10;
 
 export interface GroupInfo {
   index: number;
@@ -25,6 +25,7 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
   // Find the current batch: the batch containing the last unlocked group
   const lastUnlockedIndex = groups.reduce((last, g, i) => g.isUnlocked ? i : last, 0);
   const currentBatch = Math.floor(lastUnlockedIndex / BATCH_SIZE);
+  const totalBatches = Math.max(1, Math.ceil(groups.length / BATCH_SIZE));
   const [viewedBatch, setViewedBatch] = useState(currentBatch);
 
   // Move forward automatically when a newly unlocked group enters a new batch,
@@ -82,8 +83,8 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
           <button
             type="button"
             aria-label="المجموعات التالية"
-            onClick={() => setViewedBatch((batch) => Math.min(currentBatch, batch + 1))}
-            disabled={viewedBatch >= currentBatch}
+            onClick={() => setViewedBatch((batch) => Math.min(totalBatches - 1, batch + 1))}
+            disabled={viewedBatch >= totalBatches - 1}
             className="p-1 text-white/60 hover:text-white disabled:opacity-20 disabled:pointer-events-none"
           >
             <ChevronLeft size={18} />

@@ -15,7 +15,7 @@ import { toast } from "@/components/ui/use-toast";
 import { setSoundEnabled } from "@/lib/audio";
 
 // ─── Config ────────────────────────────────────────────────────────────────
-const QUESTIONS_PER_GROUP = 8;
+const QUESTIONS_PER_GROUP = 10;
 const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
 const SOUND_STORAGE_KEY = "bilquiz_sound_enabled";
