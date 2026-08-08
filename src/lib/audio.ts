@@ -2,9 +2,11 @@
 
 let audioCtx: AudioContext | null = null;
 let soundEnabled = true;
+let backgroundMusicTimer: number | null = null;
 
 export const setSoundEnabled = (enabled: boolean) => {
   soundEnabled = enabled;
+  if (!enabled) stopBackgroundMusic();
 };
 
 const getAudioContext = () => {
@@ -13,6 +15,43 @@ const getAudioContext = () => {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
   return audioCtx;
+};
+
+const playBackgroundChime = () => {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") ctx.resume();
+
+  [392, 523.25].forEach((frequency, index) => {
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const startTime = ctx.currentTime + index * 0.18;
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(frequency, startTime);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.035, startTime + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.7);
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start(startTime);
+    oscillator.stop(startTime + 0.7);
+  });
+};
+
+export const startBackgroundMusic = () => {
+  if (!soundEnabled || backgroundMusicTimer) return;
+  playBackgroundChime();
+  backgroundMusicTimer = window.setInterval(playBackgroundChime, 9000);
+};
+
+export const stopBackgroundMusic = () => {
+  if (!backgroundMusicTimer) return;
+  window.clearInterval(backgroundMusicTimer);
+  backgroundMusicTimer = null;
 };
 
 export const playCorrect = () => {

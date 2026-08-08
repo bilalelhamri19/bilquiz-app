@@ -12,7 +12,7 @@ import { riddles, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
-import { setSoundEnabled } from "@/lib/audio";
+import { setSoundEnabled, startBackgroundMusic, stopBackgroundMusic } from "@/lib/audio";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 10;
@@ -175,6 +175,16 @@ const Index = () => {
     const timer = window.setTimeout(() => setIsLoading(false), 1800);
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (appState === "quiz" && soundEnabled) {
+      startBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
+    }
+
+    return stopBackgroundMusic;
+  }, [appState, soundEnabled]);
 
   // Build GroupInfo array for the selector
   const groupInfos: GroupInfo[] = allGroups.map((grp, i) => ({
@@ -397,14 +407,18 @@ const Index = () => {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={() => setIsSettingsOpen(true)}
-            aria-label="الإعدادات"
-            className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-          >
-            <Settings size={20} />
-          </button>
+          {appState === "groupSelect" ? (
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="الإعدادات"
+              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+            >
+              <Settings size={20} />
+            </button>
+          ) : (
+            <div aria-hidden="true" className="h-10 w-10" />
+          )}
         </nav>
 
         {/* ── Main ── */}
