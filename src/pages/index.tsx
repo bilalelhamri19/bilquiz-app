@@ -206,10 +206,14 @@ const Index = () => {
   const handleCorrectAnswer = (questionIndex: number) => {
     const newScore = groupScore + 1;
     setGroupScore(newScore);
-    setProgress((current) => ({
-      ...current,
-      coins: current.coins + COINS_PER_CORRECT_ANSWER,
-    }));
+    // Replaying a completed group is useful for practice, but it must not
+    // generate coins repeatedly.
+    if (!(currentGroupIndex in progress.completedGroups)) {
+      setProgress((current) => ({
+        ...current,
+        coins: current.coins + COINS_PER_CORRECT_ANSWER,
+      }));
+    }
     resolveQuestion(newScore, questionIndex);
   };
 
