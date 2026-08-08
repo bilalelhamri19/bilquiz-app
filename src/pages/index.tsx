@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Settings, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowRight, Settings, Share2, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -276,6 +276,26 @@ const Index = () => {
     } catch {}
   };
 
+  const shareGame = async () => {
+    const shareData = {
+      title: "BilQuiz",
+      text: "تحداك تجاوب على ألغاز BilQuiz!",
+      url: window.location.origin,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareData.url);
+      toast({ title: "تم نسخ رابط اللعبة", description: "شاركه مع أصدقائك وتحداهم!" });
+    } catch {
+      // The player may close the native share dialog; no feedback is needed.
+    }
+  };
+
   const handleSkip = (questionIndex: number) => {
     resolveQuestion(groupScore, questionIndex);
   };
@@ -380,7 +400,7 @@ const Index = () => {
 
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* ── Navbar ── */}
-        <nav className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+        <nav className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 sm:py-4 border-b border-white/5">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div
@@ -398,7 +418,7 @@ const Index = () => {
               <span className="text-white/40 text-sm hidden sm:block">
                 سؤال <bdi dir="ltr">{questionInGroup + 1} / {currentGroupQuestions.length}</bdi>
               </span>
-              <div className="progress-bar w-28 sm:w-40">
+              <div className="progress-bar w-20 xs:w-28 sm:w-40">
                 <motion.div
                   className="progress-fill"
                   animate={{ width: `${progressPercent}%` }}
@@ -413,17 +433,38 @@ const Index = () => {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={() => {
-              startBackgroundMusic();
-              setIsSettingsOpen(true);
-            }}
-            aria-label="الإعدادات"
-            className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-          >
-            <Settings size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            {appState !== "welcome" && (
+              <button
+                type="button"
+                onClick={() => setAppState("groupSelect")}
+                aria-label="الرجوع إلى المجموعات"
+                title="الرجوع إلى المجموعات"
+                className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+              >
+                <ArrowRight size={20} />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={shareGame}
+              aria-label="مشاركة اللعبة"
+              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+            >
+              <Share2 size={19} />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                startBackgroundMusic();
+                setIsSettingsOpen(true);
+              }}
+              aria-label="الإعدادات"
+              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+            >
+              <Settings size={20} />
+            </button>
+          </div>
         </nav>
 
         {/* ── Main ── */}
@@ -549,11 +590,13 @@ const Index = () => {
         </main>
 
         {/* ── Footer ── */}
-        <footer className="text-center py-4 text-white/20 text-sm border-t border-white/5">
+        <footer className="text-center px-4 py-5 text-sm border-t border-white/5">
           <div>BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال</div>
-          <Link href="/privacy" className="mt-1 inline-block text-white/35 underline-offset-4 hover:text-emerald-300 hover:underline">
-            سياسة الخصوصية
-          </Link>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-white/35">
+            <Link href="/how-to-play" className="hover:text-emerald-300">كيف تلعب</Link>
+            <Link href="/about" className="hover:text-emerald-300">من نحن</Link>
+            <Link href="/privacy" className="hover:text-emerald-300">سياسة الخصوصية</Link>
+          </div>
         </footer>
       </div>
 
