@@ -13,6 +13,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:description" content="تطبيق ألغاز ممتع لتتحدى أصدقاءك وتختبر ذكاءك مع BilQuiz!" />
         <meta property="og:type" content="website" />
         <meta name="theme-color" content="#10b981" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2122929353158422"
+          crossOrigin="anonymous"
+        />
         <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
         <link rel="apple-touch-icon" href="/logo.jpeg" />
         <link rel="manifest" href="/manifest.json" />

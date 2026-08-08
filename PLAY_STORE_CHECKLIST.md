@@ -5,7 +5,7 @@
 - A public privacy-policy route is available at `/privacy`.
 - A privacy-policy link appears inside the app footer.
 - The policy states that game progress and sound preference are stored locally only.
-- The policy discloses the current Google Fonts request and the absence of ads, analytics, and accounts.
+- The policy discloses the current Google Fonts and Google AdSense integrations, and the absence of accounts and analytics SDKs.
 
 ## Still required before upload
 
@@ -21,4 +21,4 @@
 
 ## Data Safety guidance for the current code
 
-The game itself stores progress and sound preference locally and has no accounts, ads, analytics SDK, or server-side data storage. Re-check this declaration whenever you add a library, advertisements, analytics, login, or online gameplay.
+The game itself stores progress and sound preference locally and has no accounts, analytics SDK, or server-side data storage. Google AdSense is integrated for advertising. Re-check this declaration whenever you add a library, advertisements, analytics, login, or online gameplay.
