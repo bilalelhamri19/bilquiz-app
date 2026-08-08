@@ -135,7 +135,7 @@ const saveProgress = (p: Progress) => {
 
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>("groupSelect");
+  const [appState, setAppState] = useState<AppState>("welcome");
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
@@ -587,7 +587,7 @@ const Index = () => {
 
               <div className="mt-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-sm text-white/50 leading-relaxed">
                 <p className="font-bold text-white/70 mb-2">قواعد اللعب</p>
-                <p>خصك 6 أجوبة صحيحة من 8 باش تحل المجموعة التالية.</p>
+                <p>خصك 6 أجوبة صحيحة من 10 باش تحل المجموعة التالية.</p>
                 <p>كل جواب صحيح كيعطيك 5 coins، والتلميح كيكلف 10 coins.</p>
               </div>
             </motion.section>

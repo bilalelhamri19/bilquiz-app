@@ -35,9 +35,10 @@ const WelcomeScreen = ({ language, onStartQuiz }: WelcomeScreenProps) => {
           <Trophy className="h-12 w-12 text-white" />
         </motion.div>
 
-        <h1 className="text-5xl sm:text-6xl font-black mb-4 leading-tight">
-          <span className="gradient-text">تحدي الألغاز</span>
+        <h1 className="text-5xl sm:text-6xl font-black mb-2 leading-tight">
+          <span className="gradient-text">بيلكويز</span>
         </h1>
+        <p dir="ltr" className="text-sm font-black tracking-[0.35em] text-emerald-300/80 mb-4">BilQuiz</p>
         <p className="text-xl text-white/60 max-w-md mx-auto leading-relaxed">
           {t.tagline}
         </p>
