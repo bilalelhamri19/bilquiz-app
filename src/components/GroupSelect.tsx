@@ -30,9 +30,6 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
   );
   const visibleGroups = groups.slice(0, revealedGroupCount);
 
-  // Progress in current batch
-  const completedInBatch = visibleGroups.filter((g) => g.isCompleted).length;
-
   return (
     <div dir={dir} className="w-full max-w-2xl mx-auto px-2">
       {/* Header */}
@@ -48,18 +45,6 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
           أكمل كل مجموعة لفتح التالية 🔓
         </p>
 
-        {/* Batch Progress */}
-        <div className="glass rounded-2xl px-3 py-3 inline-flex items-center gap-3">
-          <span className="text-white/40 text-sm">المجموعات 1–{revealedGroupCount}</span>
-          <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 rounded-full"
-              animate={{ width: `${(completedInBatch / visibleGroups.length) * 100}%` }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
-          <span className="text-emerald-400 text-sm font-bold">{completedInBatch}/{visibleGroups.length}</span>
-        </div>
       </motion.div>
 
       {/* Groups Grid */}
