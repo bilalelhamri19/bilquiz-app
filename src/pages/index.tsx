@@ -46,9 +46,17 @@ const loadProgress = (): Progress => {
     if (raw) {
       const saved = JSON.parse(raw) as Partial<Progress>;
       const completedGroups = Object.fromEntries(
-        Object.entries(saved.completedGroups ?? {}).filter(
-          ([, score]) => typeof score === "number" && score >= MIN_SCORE_TO_UNLOCK_GROUP
-        )
+        Object.entries(saved.completedGroups ?? {}).filter(([index, score]) => {
+          const groupIndex = Number(index);
+          const questionCount = allGroups[groupIndex]?.length;
+          return (
+            Number.isInteger(groupIndex) &&
+            typeof score === "number" &&
+            Number.isInteger(score) &&
+            score >= MIN_SCORE_TO_UNLOCK_GROUP &&
+            score <= questionCount
+          );
+        })
       ) as Record<number, number>;
 
       // Rebuild unlocks from passed groups so progress created before the
@@ -61,9 +69,14 @@ const loadProgress = (): Progress => {
       return {
         unlockedGroups,
         completedGroups,
-        coins: typeof saved.coins === "number" ? saved.coins : 0,
+        coins:
+          typeof saved.coins === "number" && Number.isFinite(saved.coins)
+            ? Math.max(0, Math.floor(saved.coins))
+            : 0,
         lastGroupIndex: Math.min(
-          typeof saved.lastGroupIndex === "number" ? saved.lastGroupIndex : 0,
+          typeof saved.lastGroupIndex === "number" && Number.isInteger(saved.lastGroupIndex)
+            ? Math.max(0, saved.lastGroupIndex)
+            : 0,
           unlockedGroups.length - 1
         ),
       };
@@ -93,6 +106,8 @@ const Index = () => {
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [questionInGroup, setQuestionInGroup] = useState(0);
   const [groupScore, setGroupScore] = useState(0);
+  const [resolvedQuestions, setResolvedQuestions] = useState<Set<number>>(new Set());
+  const [isQuestionTransitioning, setIsQuestionTransitioning] = useState(false);
 
   const dir = "rtl";
   const language: Language = "ar";
@@ -136,22 +151,28 @@ const Index = () => {
     setCurrentGroupIndex(groupIndex);
     setQuestionInGroup(0);
     setGroupScore(0);
+    setResolvedQuestions(new Set());
+    setIsQuestionTransitioning(false);
     setProgress((current) => ({ ...current, lastGroupIndex: groupIndex }));
     setAppState("quiz");
   };
 
-  const handleCorrectAnswer = () => {
+  const handleCorrectAnswer = (questionIndex: number) => {
     const newScore = groupScore + 1;
     setGroupScore(newScore);
     setProgress((current) => ({
       ...current,
       coins: current.coins + COINS_PER_CORRECT_ANSWER,
     }));
-    advanceQuestion(newScore);
+    resolveQuestion(newScore, questionIndex);
   };
 
   const spendCoins = (amount: number) => {
-    setProgress((current) => ({ ...current, coins: current.coins - amount }));
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    setProgress((current) => ({
+      ...current,
+      coins: current.coins >= amount ? current.coins - amount : current.coins,
+    }));
   };
 
   const toggleSound = () => {
@@ -163,17 +184,34 @@ const Index = () => {
     } catch {}
   };
 
-  const handleSkip = () => {
-    advanceQuestion(groupScore);
+  const handleSkip = (questionIndex: number) => {
+    resolveQuestion(groupScore, questionIndex);
   };
 
-  const advanceQuestion = (score: number) => {
-    if (questionInGroup < currentGroupQuestions.length - 1) {
-      setQuestionInGroup((q) => q + 1);
-    } else {
-      // Group finished → update progress
-      completeGroup(score);
+  const resolveQuestion = (score: number, resolvedIndex: number) => {
+    if (
+      resolvedQuestions.has(resolvedIndex) ||
+      resolvedIndex < 0 ||
+      resolvedIndex >= currentGroupQuestions.length
+    ) {
+      return;
     }
+
+    const nextResolvedQuestions = new Set(resolvedQuestions);
+    nextResolvedQuestions.add(resolvedIndex);
+    setResolvedQuestions(nextResolvedQuestions);
+
+    const nextQuestion = currentGroupQuestions.findIndex((_, offset) => {
+      const index = (resolvedIndex + 1 + offset) % currentGroupQuestions.length;
+      return !nextResolvedQuestions.has(index);
+    });
+
+    if (nextQuestion === -1) {
+      completeGroup(score);
+      return;
+    }
+
+    setQuestionInGroup((resolvedIndex + 1 + nextQuestion) % currentGroupQuestions.length);
   };
 
   const completeGroup = useCallback(
@@ -217,7 +255,7 @@ const Index = () => {
   );
 
   const progressPercent = Math.round(
-    ((questionInGroup + 1) / currentGroupQuestions.length) * 100
+    (resolvedQuestions.size / currentGroupQuestions.length) * 100
   );
 
   // ── Render ──────────────────────────────────────────────────────────────
@@ -338,22 +376,26 @@ const Index = () => {
                   <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                     {currentGroupQuestions.map((_, index) => {
                       const isCurrentQuestion = index === questionInGroup;
-                      const isPastQuestion = index < questionInGroup;
+                      const isResolved = resolvedQuestions.has(index);
 
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={index}
+                          onClick={() => !isQuestionTransitioning && setQuestionInGroup(index)}
+                          disabled={isResolved || isQuestionTransitioning}
                           aria-current={isCurrentQuestion ? "step" : undefined}
-                          className={`rounded-lg py-2 text-center text-sm font-bold ${
+                          aria-label={`السؤال ${index + 1}`}
+                          className={`rounded-lg py-2 text-center text-sm font-bold transition-colors ${
                             isCurrentQuestion
                               ? "bg-emerald-500 text-slate-950"
-                              : isPastQuestion
+                              : isResolved
                               ? "bg-violet-500/20 text-violet-300"
-                              : "bg-white/5 text-white/40"
+                              : "bg-white/5 text-white/60 hover:bg-white/10"
                           }`}
                         >
                           {index + 1}
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -365,8 +407,9 @@ const Index = () => {
                   language={language}
                   coins={progress.coins}
                   onSpendCoins={spendCoins}
-                  onCorrectAnswer={handleCorrectAnswer}
-                  onSkip={handleSkip}
+                  onCorrectAnswer={() => handleCorrectAnswer(questionInGroup)}
+                  onSkip={() => handleSkip(questionInGroup)}
+                  onAnswerPendingChange={setIsQuestionTransitioning}
                 />
               </motion.div>
             )}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Riddle, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
@@ -13,6 +13,7 @@ interface QuizCardProps {
   onSpendCoins: (amount: number) => void;
   onCorrectAnswer: () => void;
   onSkip: () => void;
+  onAnswerPendingChange: (isPending: boolean) => void;
 }
 
 const QUESTION_TIME_SECONDS = 60;
@@ -36,9 +37,10 @@ const normalizeForCompare = (value: string) =>
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
 const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
-const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip }: QuizCardProps) => {
+const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip, onAnswerPendingChange }: QuizCardProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_SECONDS);
+  const correctAnswerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const t = ui[language];
   const content = riddle.translations[language];
@@ -93,6 +95,13 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     setPool(combined);
   }, [riddle.id, language, primaryAnswer]);
 
+  useEffect(() => {
+    return () => {
+      if (correctAnswerTimer.current) clearTimeout(correctAnswerTimer.current);
+      onAnswerPendingChange(false);
+    };
+  }, [onAnswerPendingChange]);
+
   // Timer effect
   useEffect(() => {
     if (isCorrect !== null) return; // Stop timer if answered
@@ -121,7 +130,9 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     if (isAnswerCorrect) {
       playCorrect();
       toast({ title: t.correct, description: t.correctDesc, variant: "default" });
-      setTimeout(() => {
+      onAnswerPendingChange(true);
+      correctAnswerTimer.current = setTimeout(() => {
+        onAnswerPendingChange(false);
         setSelected([]);
         setIsCorrect(null);
         onCorrectAnswer();
@@ -305,6 +316,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
           <div className="px-6 pb-6 flex justify-between items-center border-t border-white/5 pt-4">
             <button
               onClick={onSkip}
+              disabled={isCorrect === true}
               className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm"
             >
               <SkipForward size={14} />

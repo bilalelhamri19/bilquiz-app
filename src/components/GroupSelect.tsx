@@ -74,7 +74,7 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
           <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 rounded-full"
-              animate={{ width: `${(completedInBatch / BATCH_SIZE) * 100}%` }}
+              animate={{ width: `${(completedInBatch / visibleGroups.length) * 100}%` }}
               transition={{ duration: 0.5 }}
             />
           </div>
