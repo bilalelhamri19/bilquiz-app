@@ -1,7 +1,7 @@
 
 
 import { motion } from "framer-motion";
-import { Brain, Globe, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 
@@ -9,27 +9,6 @@ interface WelcomeScreenProps {
   language: Language;
   onStartQuiz: () => void;
 }
-
-const features = [
-  {
-    icon: Brain,
-    title: "1000 سؤال",
-    desc: "قاعدة أسئلة ضخمة تجعل كل جلسة تجربة جديدة.",
-    color: "from-emerald-500/20 to-teal-500/20",
-    border: "border-emerald-500/20",
-    iconColor: "text-emerald-400",
-    glow: "glow-emerald",
-  },
-  {
-    icon: Globe,
-    title: "بالعربية فقط",
-    desc: "تجربة مصممة بالكامل باللغة العربية.",
-    color: "from-blue-500/20 to-cyan-500/20",
-    border: "border-blue-500/20",
-    iconColor: "text-blue-400",
-    glow: "glow-blue",
-  },
-];
 
 const WelcomeScreen = ({ language, onStartQuiz }: WelcomeScreenProps) => {
   const t = ui[language];
@@ -62,30 +41,6 @@ const WelcomeScreen = ({ language, onStartQuiz }: WelcomeScreenProps) => {
         <p className="text-xl text-white/60 max-w-md mx-auto leading-relaxed">
           {t.tagline}
         </p>
-      </motion.div>
-
-      {/* Feature Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="grid w-full max-w-3xl gap-4 sm:grid-cols-3 mb-12"
-      >
-        {features.map((f, i) => (
-          <motion.div
-            key={f.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 + i * 0.1 }}
-            className={`glass glass-hover rounded-3xl p-6 text-right ${f.border}`}
-          >
-            <div className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${f.color} mb-4`}>
-              <f.icon className={`h-6 w-6 ${f.iconColor}`} />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">{f.title}</h3>
-            <p className="text-sm text-white/50 leading-relaxed">{f.desc}</p>
-          </motion.div>
-        ))}
       </motion.div>
 
       {/* CTA Button */}
