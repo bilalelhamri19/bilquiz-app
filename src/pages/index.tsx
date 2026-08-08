@@ -11,6 +11,7 @@ import GroupResult from "@/components/GroupResult";
 import { riddles, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Toaster } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/use-toast";
 import { setSoundEnabled } from "@/lib/audio";
 
 // ─── Config ────────────────────────────────────────────────────────────────
@@ -205,14 +206,39 @@ const Index = () => {
 
   const handleCorrectAnswer = (questionIndex: number) => {
     const newScore = groupScore + 1;
+    const nextGroup = currentGroupIndex + 1;
+    const unlocksNextGroup =
+      newScore === MIN_SCORE_TO_UNLOCK_GROUP &&
+      nextGroup < totalGroups &&
+      !progress.unlockedGroups.includes(nextGroup);
+
     setGroupScore(newScore);
-    // Replaying a completed group is useful for practice, but it must not
-    // generate coins repeatedly.
-    if (!(currentGroupIndex in progress.completedGroups)) {
-      setProgress((current) => ({
+    setProgress((current) => {
+      const unlockedGroups = [...current.unlockedGroups];
+      if (
+        newScore >= MIN_SCORE_TO_UNLOCK_GROUP &&
+        nextGroup < totalGroups &&
+        !unlockedGroups.includes(nextGroup)
+      ) {
+        unlockedGroups.push(nextGroup);
+      }
+
+      return {
         ...current,
-        coins: current.coins + COINS_PER_CORRECT_ANSWER,
-      }));
+        unlockedGroups,
+        coins:
+          currentGroupIndex in current.completedGroups
+            ? current.coins
+            : current.coins + COINS_PER_CORRECT_ANSWER,
+        lastGroupIndex: unlockedGroups.includes(nextGroup) ? nextGroup : current.lastGroupIndex,
+      };
+    });
+
+    if (unlocksNextGroup) {
+      toast({
+        title: "تم فتح المجموعة التالية! 🎉",
+        description: `وصلت إلى ${MIN_SCORE_TO_UNLOCK_GROUP} أجوبة صحيحة. يمكنك إكمال المجموعة الحالية أو الانتقال للمجموعة ${nextGroup + 1}.`,
+      });
     }
     resolveQuestion(newScore, questionIndex);
   };
@@ -354,7 +380,7 @@ const Index = () => {
           {appState === "quiz" && (
             <div className="flex items-center gap-3">
               <span className="text-white/40 text-sm hidden sm:block">
-                سؤال {questionInGroup + 1} / {currentGroupQuestions.length}
+                سؤال <bdi dir="ltr">{questionInGroup + 1} / {currentGroupQuestions.length}</bdi>
               </span>
               <div className="progress-bar w-28 sm:w-40">
                 <motion.div
@@ -363,7 +389,7 @@ const Index = () => {
                   transition={{ duration: 0.4 }}
                 />
               </div>
-              <div className="glass rounded-full px-3 py-1 flex items-center gap-1.5">
+              <div dir="ltr" className="glass rounded-full px-3 py-1 flex items-center gap-1.5">
                 <span className="text-emerald-400 text-sm font-bold">{groupScore}</span>
                 <span className="text-white/30 text-xs">/</span>
                 <span className="text-white/40 text-sm">{currentGroupQuestions.length}</span>
@@ -427,8 +453,8 @@ const Index = () => {
                 {/* Mobile progress bar */}
                 <div className="sm:hidden glass rounded-xl p-3">
                   <div className="flex justify-between text-xs text-white/40 mb-2">
-                    <span>سؤال {questionInGroup + 1} من {currentGroupQuestions.length}</span>
-                    <span className="text-emerald-400 font-bold">{groupScore} ✓</span>
+                    <span>سؤال <bdi dir="ltr">{questionInGroup + 1} / {currentGroupQuestions.length}</bdi></span>
+                    <span dir="ltr" className="text-emerald-400 font-bold">{groupScore} ✓</span>
                   </div>
                   <div className="progress-bar">
                     <motion.div className="progress-fill" animate={{ width: `${progressPercent}%` }} />
