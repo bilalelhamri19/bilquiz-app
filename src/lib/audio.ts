@@ -3,6 +3,7 @@
 let audioCtx: AudioContext | null = null;
 let soundEnabled = true;
 let backgroundMusicTimer: number | null = null;
+let backgroundMusicStartPending = false;
 const activeBackgroundOscillators = new Set<OscillatorNode>();
 
 export const setSoundEnabled = (enabled: boolean) => {
@@ -16,6 +17,24 @@ const getAudioContext = () => {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
   return audioCtx;
+};
+
+// `resume()` must be requested as part of a user gesture.  Do not schedule
+// notes until it has actually completed, otherwise the first measure can be
+// discarded by browsers that block autoplay.
+const ensureAudioContextIsRunning = async () => {
+  const ctx = getAudioContext();
+  if (!ctx) return null;
+
+  if (ctx.state !== "running") {
+    try {
+      await ctx.resume();
+    } catch {
+      return null;
+    }
+  }
+
+  return ctx.state === "running" ? ctx : null;
 };
 
 const scheduleBackgroundNote = (
@@ -62,12 +81,8 @@ const scheduleKick = (ctx: AudioContext, startTime: number) => {
   oscillator.stop(startTime + 0.2);
 };
 
-const playBackgroundMeasure = () => {
-  if (!soundEnabled) return;
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  if (ctx.state === "suspended") void ctx.resume().catch(() => {});
+const playBackgroundMeasure = (ctx: AudioContext) => {
+  if (!soundEnabled || ctx.state !== "running") return;
 
   const stepDuration = 0.32;
   const startTime = ctx.currentTime + 0.05;
@@ -97,15 +112,20 @@ const playBackgroundMeasure = () => {
 };
 
 export const startBackgroundMusic = () => {
-  if (!soundEnabled) return;
-  const ctx = getAudioContext();
-  if (ctx?.state === "suspended") void ctx.resume().catch(() => {});
-  if (backgroundMusicTimer) return;
-  playBackgroundMeasure();
-  backgroundMusicTimer = window.setInterval(playBackgroundMeasure, 5120);
+  if (!soundEnabled || backgroundMusicTimer || backgroundMusicStartPending) return;
+
+  backgroundMusicStartPending = true;
+  void ensureAudioContextIsRunning().then((ctx) => {
+    backgroundMusicStartPending = false;
+    if (!ctx || !soundEnabled || backgroundMusicTimer) return;
+
+    playBackgroundMeasure(ctx);
+    backgroundMusicTimer = window.setInterval(() => playBackgroundMeasure(ctx), 5120);
+  });
 };
 
 export const stopBackgroundMusic = () => {
+  backgroundMusicStartPending = false;
   if (backgroundMusicTimer) {
     window.clearInterval(backgroundMusicTimer);
     backgroundMusicTimer = null;

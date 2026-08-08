@@ -269,6 +269,7 @@ const Index = () => {
     const nextValue = !soundEnabled;
     setSoundEnabledState(nextValue);
     setSoundEnabled(nextValue);
+    if (nextValue) startBackgroundMusic();
     try {
       localStorage.setItem(SOUND_STORAGE_KEY, String(nextValue));
     } catch {}
@@ -413,7 +414,10 @@ const Index = () => {
 
           <button
             type="button"
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => {
+              startBackgroundMusic();
+              setIsSettingsOpen(true);
+            }}
             aria-label="الإعدادات"
             className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
           >
