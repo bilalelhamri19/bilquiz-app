@@ -216,6 +216,26 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
             <h3 className="text-2xl font-bold text-white leading-relaxed">
               {content.question}
             </h3>
+
+            {/* Hint Panel — shown above the answer area */}
+            <AnimatePresence>
+              {showHint && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-2">
+                    <p className="text-amber-400 text-sm font-bold flex items-center gap-2">
+                      💡 {hintVariants[currentHintIndex].label}
+                    </p>
+                    <p className="text-white/70 text-sm">{hintVariants[currentHintIndex].text}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Body */}
@@ -295,41 +315,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
               </div>
             </div>
 
-            {/* Hint Button Only */}
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={showRiddleHint}
-                disabled={currentHintIndex >= hintVariants.length - 1}
-                className="btn-ghost-dark w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold disabled:opacity-40 disabled:pointer-events-none"
-              >
-                <HelpCircle size={16} />
-                {showHint ? `تلميح ${currentHintIndex + 1} من ${hintVariants.length}` : t.hint}
-              </button>
-            </div>
 
-            {/* Hint Panel */}
-            <AnimatePresence>
-              {showHint && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginTop: 16 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-3">
-                    <p className="text-amber-400 text-sm font-bold flex items-center gap-2">
-                      💡 {hintVariants[currentHintIndex].label}
-                    </p>
-                    <p className="text-white/70 text-sm">{hintVariants[currentHintIndex].text}</p>
-                    <p className="text-white/40 text-xs">
-                      تم استخدام التلميح {hintUsageCount} مرة{hintUsageCount === 1 ? "" : "/مرات"}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
           {/* Footer */}
@@ -340,6 +326,16 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
             >
               <SkipForward size={14} />
               {t.skip}
+            </button>
+
+            <button
+              type="button"
+              onClick={showRiddleHint}
+              disabled={currentHintIndex >= hintVariants.length - 1}
+              className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-amber-400 border-amber-500/20 disabled:opacity-30 disabled:pointer-events-none"
+            >
+              <HelpCircle size={14} />
+              {showHint ? `تلميح ${currentHintIndex + 1}/${hintVariants.length}` : t.hint}
             </button>
 
             <AnimatePresence>

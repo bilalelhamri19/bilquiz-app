@@ -1,7 +1,7 @@
 
 
 import { motion } from "framer-motion";
-import { Brain, Zap, Globe, Trophy } from "lucide-react";
+import { Brain, Globe, Trophy } from "lucide-react";
 import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 
@@ -19,15 +19,6 @@ const features = [
     border: "border-emerald-500/20",
     iconColor: "text-emerald-400",
     glow: "glow-emerald",
-  },
-  {
-    icon: Zap,
-    title: "تلميحات ذكية",
-    desc: "ثلاثة أنواع من التلميحات لمساعدتك على الإجابة.",
-    color: "from-violet-500/20 to-purple-500/20",
-    border: "border-violet-500/20",
-    iconColor: "text-violet-400",
-    glow: "glow-purple",
   },
   {
     icon: Globe,
