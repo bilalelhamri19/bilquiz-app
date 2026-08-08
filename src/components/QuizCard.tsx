@@ -4,6 +4,7 @@ import { Riddle, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { playCorrect, playWrong } from "@/lib/audio";
 
 interface QuizCardProps {
   riddle: Riddle;
@@ -41,6 +42,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [hintUsageCount, setHintUsageCount] = useState(0);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   const t = ui[language];
   const content = riddle.translations[language];
@@ -70,6 +72,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     setShowHint(false);
     setCurrentHintIndex(0);
     setHintUsageCount(0);
+    setTimeLeft(30);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
     const answerChars = Array.from(cleanAnswer);
@@ -97,6 +100,22 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     setPool(combined);
   }, [riddle.id, language, primaryAnswer]);
 
+  // Timer effect
+  useEffect(() => {
+    if (isCorrect !== null) return; // Stop timer if answered
+
+    if (timeLeft <= 0) {
+      onSkip(); // Skip automatically when timer hits 0
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft, isCorrect, onSkip]);
+
   const hintVariants = [
     { label: "تلميح", text: content.hint },
     { label: "الحروف الأولى", text: getFirstLetters(primaryAnswer) },
@@ -114,6 +133,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     setIsCorrect(isAnswerCorrect);
 
     if (isAnswerCorrect) {
+      playCorrect();
       toast({ title: t.correct, description: t.correctDesc, variant: "default" });
       setTimeout(() => {
         setSelected([]);
@@ -122,6 +142,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
         onCorrectAnswer();
       }, 1200);
     } else {
+      playWrong();
       toast({ title: t.wrong, description: t.wrongDesc, variant: "destructive" });
     }
   };
@@ -185,7 +206,12 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
           <div className="p-6 pb-4 border-b border-white/6">
             <div className="flex items-center justify-between mb-4">
               <span className="badge-ar">عربي 🌙</span>
-              <span className="text-white/40 text-sm font-medium">سؤال #{riddle.id}</span>
+              <div className="flex items-center gap-3">
+                <div className={`text-sm font-bold px-2.5 py-1 rounded-lg transition-colors ${timeLeft <= 5 ? "bg-red-500/20 text-red-400 animate-pulse" : "bg-white/10 text-white/70"}`}>
+                  ⏳ {timeLeft} ث
+                </div>
+                <span className="text-white/40 text-sm font-medium">سؤال #{riddle.id}</span>
+              </div>
             </div>
             <h3 className="text-2xl font-bold text-white leading-relaxed">
               {content.question}
