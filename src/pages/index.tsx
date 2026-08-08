@@ -10,7 +10,6 @@ import GroupResult from "@/components/GroupResult";
 import { riddles, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/components/ui/use-toast";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 8;
@@ -77,7 +76,6 @@ const Index = () => {
   const dir = "rtl";
   const language: Language = "ar";
 
-  const { toast } = useToast();
   const t = ui[language];
 
   const currentGroupQuestions = allGroups[currentGroupIndex] ?? [];
@@ -130,7 +128,6 @@ const Index = () => {
   };
 
   const handleSkip = () => {
-    toast({ title: t.skipped });
     advanceQuestion(groupScore);
   };
 
