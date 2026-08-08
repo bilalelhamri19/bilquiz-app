@@ -47,6 +47,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
   const content = riddle.translations[language];
   const dir = language === "ar" ? "rtl" : "ltr";
   const primaryAnswer = content.answers[0];
+  const explanation = `الجواب الصحيح هو «${primaryAnswer}». ${content.hint}`;
 
   // Letter grid state
   const [pool, setPool] = useState<string[]>([]);
@@ -124,7 +125,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
         setSelected([]);
         setIsCorrect(null);
         onCorrectAnswer();
-      }, 1200);
+      }, 3200);
     } else {
       playWrong();
       toast({ title: t.wrong, description: t.wrongDesc, variant: "destructive" });
@@ -249,6 +250,21 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
                 </div>
               ))}
             </div>
+
+            <AnimatePresence>
+              {isCorrect === true && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-right"
+                  role="status"
+                >
+                  <p className="mb-1 text-sm font-black text-emerald-400">تفسير الإجابة</p>
+                  <p className="text-sm leading-relaxed text-white/80">{explanation}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Backspace / Delete Controls */}
             <div className="flex justify-center gap-3">
