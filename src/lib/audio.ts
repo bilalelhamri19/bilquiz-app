@@ -3,6 +3,7 @@
 let audioCtx: AudioContext | null = null;
 let soundEnabled = true;
 let backgroundMusicTimer: number | null = null;
+const activeBackgroundOscillators = new Set<OscillatorNode>();
 
 export const setSoundEnabled = (enabled: boolean) => {
   soundEnabled = enabled;
@@ -17,41 +18,102 @@ const getAudioContext = () => {
   return audioCtx;
 };
 
-const playBackgroundChime = () => {
+const scheduleBackgroundNote = (
+  ctx: AudioContext,
+  frequency: number,
+  startTime: number,
+  duration: number,
+  volume: number,
+  type: OscillatorType = "triangle"
+) => {
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, startTime);
+  gain.gain.setValueAtTime(0.001, startTime);
+  gain.gain.linearRampToValueAtTime(volume, startTime + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+  activeBackgroundOscillators.add(oscillator);
+  oscillator.onended = () => activeBackgroundOscillators.delete(oscillator);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + duration);
+};
+
+const scheduleKick = (ctx: AudioContext, startTime: number) => {
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(150, startTime);
+  oscillator.frequency.exponentialRampToValueAtTime(48, startTime + 0.16);
+  gain.gain.setValueAtTime(0.001, startTime);
+  gain.gain.linearRampToValueAtTime(0.075, startTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+  activeBackgroundOscillators.add(oscillator);
+  oscillator.onended = () => activeBackgroundOscillators.delete(oscillator);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + 0.2);
+};
+
+const playBackgroundMeasure = () => {
   if (!soundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;
 
   if (ctx.state === "suspended") ctx.resume();
 
-  [392, 523.25].forEach((frequency, index) => {
-    const oscillator = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const startTime = ctx.currentTime + index * 0.18;
+  const stepDuration = 0.32;
+  const startTime = ctx.currentTime + 0.05;
+  const melody = [659.25, 783.99, 880, 783.99, 659.25, 587.33, 659.25, 523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 493.88, 523.25];
+  const bass = [130.81, 146.83, 164.81, 130.81];
+  const chords = [
+    [261.63, 329.63, 392],
+    [293.66, 349.23, 440],
+    [329.63, 392, 493.88],
+    [261.63, 329.63, 392],
+  ];
 
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(frequency, startTime);
-    gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.035, startTime + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.7);
+  melody.forEach((frequency, step) => {
+    scheduleBackgroundNote(ctx, frequency, startTime + step * stepDuration, 0.26, 0.06);
+  });
 
-    oscillator.connect(gain);
-    gain.connect(ctx.destination);
-    oscillator.start(startTime);
-    oscillator.stop(startTime + 0.7);
+  bass.forEach((frequency, index) => {
+    const beatStart = startTime + index * stepDuration * 4;
+    scheduleBackgroundNote(ctx, frequency, beatStart, 1.1, 0.045, "sine");
+    scheduleKick(ctx, beatStart);
+  });
+
+  chords.forEach((chord, index) => {
+    const chordStart = startTime + index * stepDuration * 4;
+    chord.forEach((frequency) => scheduleBackgroundNote(ctx, frequency, chordStart, 1.15, 0.013, "sine"));
   });
 };
 
 export const startBackgroundMusic = () => {
   if (!soundEnabled || backgroundMusicTimer) return;
-  playBackgroundChime();
-  backgroundMusicTimer = window.setInterval(playBackgroundChime, 9000);
+  playBackgroundMeasure();
+  backgroundMusicTimer = window.setInterval(playBackgroundMeasure, 5120);
 };
 
 export const stopBackgroundMusic = () => {
-  if (!backgroundMusicTimer) return;
-  window.clearInterval(backgroundMusicTimer);
-  backgroundMusicTimer = null;
+  if (backgroundMusicTimer) {
+    window.clearInterval(backgroundMusicTimer);
+    backgroundMusicTimer = null;
+  }
+
+  activeBackgroundOscillators.forEach((oscillator) => {
+    try {
+      oscillator.stop();
+    } catch {}
+  });
+  activeBackgroundOscillators.clear();
 };
 
 export const playCorrect = () => {
