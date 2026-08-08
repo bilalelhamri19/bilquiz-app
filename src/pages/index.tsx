@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import { Coins } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -15,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 8;
 const STORAGE_KEY = "bilquiz_progress";
+const COINS_PER_CORRECT_ANSWER = 5;
 
 // Split riddles into groups of 8
 const allGroups = Array.from(
@@ -28,18 +30,26 @@ type AppState = "welcome" | "groupSelect" | "quiz" | "groupResult";
 interface Progress {
   unlockedGroups: number[];            // group indices that are unlocked
   completedGroups: Record<number, number>; // groupIndex → best score
+  coins: number;
 }
 
 const loadProgress = (): Progress => {
   if (typeof window === "undefined") {
-    return { unlockedGroups: [0], completedGroups: {} };
+    return { unlockedGroups: [0], completedGroups: {}, coins: 0 };
   }
 
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const saved = JSON.parse(raw) as Partial<Progress>;
+      return {
+        unlockedGroups: saved.unlockedGroups ?? [0],
+        completedGroups: saved.completedGroups ?? {},
+        coins: typeof saved.coins === "number" ? saved.coins : 0,
+      };
+    }
   } catch {}
-  return { unlockedGroups: [0], completedGroups: {} };
+  return { unlockedGroups: [0], completedGroups: {}, coins: 0 };
 };
 
 const saveProgress = (p: Progress) => {
@@ -54,7 +64,7 @@ const saveProgress = (p: Progress) => {
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("welcome");
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {} });
+  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, coins: 0 });
   const [hasMounted, setHasMounted] = useState(false);
 
   // Current session
@@ -104,7 +114,15 @@ const Index = () => {
   const handleCorrectAnswer = () => {
     const newScore = groupScore + 1;
     setGroupScore(newScore);
+    setProgress((current) => ({
+      ...current,
+      coins: current.coins + COINS_PER_CORRECT_ANSWER,
+    }));
     advanceQuestion(newScore);
+  };
+
+  const spendCoins = (amount: number) => {
+    setProgress((current) => ({ ...current, coins: current.coins - amount }));
   };
 
   const handleSkip = () => {
@@ -124,28 +142,31 @@ const Index = () => {
 
   const completeGroup = useCallback(
     (score: number) => {
-      const newProgress: Progress = {
-        unlockedGroups: [...progress.unlockedGroups],
-        completedGroups: {
-          ...progress.completedGroups,
-          [currentGroupIndex]: Math.max(
-            score,
-            progress.completedGroups[currentGroupIndex] ?? 0
-          ),
-        },
-      };
+      setProgress((current) => {
+        const newProgress: Progress = {
+          ...current,
+          unlockedGroups: [...current.unlockedGroups],
+          completedGroups: {
+            ...current.completedGroups,
+            [currentGroupIndex]: Math.max(
+              score,
+              current.completedGroups[currentGroupIndex] ?? 0
+            ),
+          },
+        };
 
-      // Unlock next group if it exists and isn't already unlocked
-      const nextGroup = currentGroupIndex + 1;
-      if (nextGroup < totalGroups && !newProgress.unlockedGroups.includes(nextGroup)) {
-        newProgress.unlockedGroups.push(nextGroup);
-      }
+        // Unlock next group if it exists and isn't already unlocked
+        const nextGroup = currentGroupIndex + 1;
+        if (nextGroup < totalGroups && !newProgress.unlockedGroups.includes(nextGroup)) {
+          newProgress.unlockedGroups.push(nextGroup);
+        }
 
-      setProgress(newProgress);
+        return newProgress;
+      });
       setGroupScore(score);
       setAppState("groupResult");
     },
-    [currentGroupIndex, progress, totalGroups]
+    [currentGroupIndex, totalGroups]
   );
 
   const progressPercent = Math.round(
@@ -198,8 +219,14 @@ const Index = () => {
           )}
 
           {/* Right badge */}
-          <div className="badge-ar hidden sm:block">
-            {totalGroups} مجموعة
+          <div className="flex items-center gap-3">
+            <div className="glass rounded-full px-3 py-1.5 flex items-center gap-1.5 text-amber-300" aria-label={`${progress.coins} coins`}>
+              <Coins size={16} fill="currentColor" />
+              <span className="font-bold text-sm">{progress.coins}</span>
+            </div>
+            <div className="badge-ar hidden sm:block">
+              {totalGroups} مجموعة
+            </div>
           </div>
         </nav>
 
@@ -257,6 +284,8 @@ const Index = () => {
                 <QuizCard
                   riddle={currentRiddle}
                   language={language}
+                  coins={progress.coins}
+                  onSpendCoins={spendCoins}
                   onCorrectAnswer={handleCorrectAnswer}
                   onSkip={handleSkip}
                 />

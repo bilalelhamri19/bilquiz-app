@@ -9,11 +9,14 @@ import { playCorrect, playWrong } from "@/lib/audio";
 interface QuizCardProps {
   riddle: Riddle;
   language: Language;
+  coins: number;
+  onSpendCoins: (amount: number) => void;
   onCorrectAnswer: () => void;
   onSkip: () => void;
 }
 
 const QUESTION_TIME_SECONDS = 60;
+const HINT_COST = 10;
 
 const normalize = (value: string) =>
   value
@@ -33,8 +36,7 @@ const normalizeForCompare = (value: string) =>
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
 const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
-const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) => {
-  const [isFirstLetterRevealed, setIsFirstLetterRevealed] = useState(false);
+const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip }: QuizCardProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_SECONDS);
 
@@ -63,7 +65,6 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
   useEffect(() => {
     setSelected([]);
     setIsCorrect(null);
-    setIsFirstLetterRevealed(false);
     setTimeLeft(QUESTION_TIME_SECONDS);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
@@ -162,15 +163,24 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     setIsCorrect(null);
   };
 
-  const revealFirstLetter = () => {
-    if (selected.length > 0 || isFirstLetterRevealed) return;
+  const buyHint = () => {
+    if (coins < HINT_COST || selected.length >= totalSlots) return;
 
-    const firstLetter = Array.from(primaryAnswer.replace(/\s+/g, ""))[0];
-    const poolIndex = pool.findIndex((char) => char === firstLetter);
+    const answerLetters = Array.from(primaryAnswer.replace(/\s+/g, ""));
+    const nextLetter = answerLetters[selected.length];
+    const poolIndex = pool.findIndex(
+      (char, index) => char === nextLetter && !selected.some((item) => item.poolIndex === index)
+    );
     if (poolIndex === -1) return;
 
-    setSelected([{ char: firstLetter, poolIndex }]);
-    setIsFirstLetterRevealed(true);
+    const newSelected = [...selected, { char: nextLetter, poolIndex }];
+    setSelected(newSelected);
+    setIsCorrect(null);
+    onSpendCoins(HINT_COST);
+
+    if (newSelected.length === totalSlots) {
+      checkAnswer(newSelected);
+    }
   };
 
   const getGridColsClass = (length: number) => {
@@ -300,12 +310,13 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
 
             <button
               type="button"
-              onClick={revealFirstLetter}
-              disabled={selected.length > 0 || isFirstLetterRevealed}
+              onClick={buyHint}
+              disabled={coins < HINT_COST || selected.length >= totalSlots || isCorrect === true}
               className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-amber-400 border-amber-500/20 disabled:opacity-30 disabled:pointer-events-none"
             >
               <HelpCircle size={14} />
-              {isFirstLetterRevealed ? "تم إظهار أول حرف" : "إظهار أول حرف"}
+              <span>تلميح</span>
+              <span className="rounded-full bg-amber-400/15 px-1.5 py-0.5 text-xs font-bold">{HINT_COST} 🪙</span>
             </button>
 
             <AnimatePresence>
