@@ -30,11 +30,12 @@ interface Progress {
   unlockedGroups: number[];            // group indices that are unlocked
   completedGroups: Record<number, number>; // groupIndex → best score
   coins: number;
+  lastGroupIndex: number;
 }
 
 const loadProgress = (): Progress => {
   if (typeof window === "undefined") {
-    return { unlockedGroups: [0], completedGroups: {}, coins: 0 };
+    return { unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 };
   }
 
   try {
@@ -45,10 +46,11 @@ const loadProgress = (): Progress => {
         unlockedGroups: saved.unlockedGroups ?? [0],
         completedGroups: saved.completedGroups ?? {},
         coins: typeof saved.coins === "number" ? saved.coins : 0,
+        lastGroupIndex: typeof saved.lastGroupIndex === "number" ? saved.lastGroupIndex : 0,
       };
     }
   } catch {}
-  return { unlockedGroups: [0], completedGroups: {}, coins: 0 };
+  return { unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 };
 };
 
 const saveProgress = (p: Progress) => {
@@ -63,7 +65,7 @@ const saveProgress = (p: Progress) => {
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("welcome");
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, coins: 0 });
+  const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
 
   // Current session
@@ -107,6 +109,7 @@ const Index = () => {
     setCurrentGroupIndex(groupIndex);
     setQuestionInGroup(0);
     setGroupScore(0);
+    setProgress((current) => ({ ...current, lastGroupIndex: groupIndex }));
     setAppState("quiz");
   };
 
@@ -159,6 +162,7 @@ const Index = () => {
         if (nextGroup < totalGroups && !newProgress.unlockedGroups.includes(nextGroup)) {
           newProgress.unlockedGroups.push(nextGroup);
         }
+        newProgress.lastGroupIndex = nextGroup < totalGroups ? nextGroup : currentGroupIndex;
 
         return newProgress;
       });
@@ -233,7 +237,7 @@ const Index = () => {
                 className="w-full">
                 <WelcomeScreen
                   language={language}
-                  onStartQuiz={() => setAppState("groupSelect")}
+                  onStartQuiz={() => startGroup(Math.min(progress.lastGroupIndex, totalGroups - 1))}
                 />
               </motion.div>
             )}
