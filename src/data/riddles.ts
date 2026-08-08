@@ -271,86 +271,68 @@ const baseRiddles: Riddle[] = [
   },
 ];
 
-const ltrNumber = (value: number) => `\u2066${value}\u2069`;
+const ltrNumber = (value: number | string) => `\u2066${value}\u2069`;
 
-const numericTemplates = [
-  {
-    en: (n: number) => `What comes after ${n}?`,
-    ar: (n: number) => `كم يأتي بعد ${ltrNumber(n)}؟`,
-    fr: (n: number) => `Quel nombre vient après ${n} ?`,
-    es: (n: number) => `¿Qué número viene después de ${n}?`,
-    hintAr: (n: number) => `هو العدد الذي يلي ${ltrNumber(n)}`,
-    hintEn: (n: number) => `It is the number after ${n}.`,
-    hintFr: (n: number) => `C'est le nombre qui suit ${n}.`,
-    hintEs: (n: number) => `Es el número que viene después de ${n}.`,
-  },
-  {
-    en: (n: number) => `What number comes before ${n + 2}?`,
-    ar: (n: number) => `ما هو العدد الذي يسبق ${ltrNumber(n + 2)}؟`,
-    fr: (n: number) => `Quel nombre vient avant ${n + 2} ?`,
-    es: (n: number) => `¿Qué número viene antes de ${n + 2}?`,
-    hintAr: (n: number) => `هو العدد الذي يسبق ${ltrNumber(n + 2)}`,
-    hintEn: (n: number) => `It's one less than ${n + 2}.`,
-    hintFr: (n: number) => `C'est un de moins que ${n + 2}.`,
-    hintEs: (n: number) => `Es uno menos que ${n + 2}.`,
-  },
-  {
-    en: (n: number) => `Add one to ${n}. What number do you get?`,
-    ar: (n: number) => `أضف واحدًا إلى ${ltrNumber(n)}. ما العدد؟`,
-    fr: (n: number) => `Ajoute un à ${n}. Quel nombre obtiens-tu ?`,
-    es: (n: number) => `Suma uno a ${n}. ¿Qué número obtienes?`,
-    hintAr: (n: number) => `إنه العدد بعد إضافة واحد إلى ${ltrNumber(n)}`,
-    hintEn: (n: number) => `It's one more than ${n}.`,
-    hintFr: (n: number) => `C'est un de plus que ${n}.`,
-    hintEs: (n: number) => `Es uno más que ${n}.`,
-  },
-  {
-    en: (n: number) => `If you have ${n} apples and get one more, how many apples do you have?`,
-    ar: (n: number) => `إذا كان لديك ${ltrNumber(n)} تفاحة وأضفت واحدة، كم يصبح العدد؟`,
-    fr: (n: number) => `Si tu as ${n} pommes et en reçois une de plus, combien en as-tu ?`,
-    es: (n: number) => `Si tienes ${n} manzanas y recibes una más, ¿cuántas tienes?`,
-    hintAr: (n: number) => `أضف التفاحة الإضافية إلى ${ltrNumber(n)}`,
-    hintEn: (n: number) => `Add one apple to ${n}.`,
-    hintFr: (n: number) => `Ajoute une pomme à ${n}.`,
-    hintEs: (n: number) => `Suma una manzana a ${n}.`,
-  },
+type ArabicPuzzle = Omit<LocalizedRiddle, "answers"> & { answers: string[] };
+
+const logicalRiddle = (id: number, puzzle: ArabicPuzzle): Riddle => ({
+  id,
+  // The current game is Arabic-only. Keeping the same fallback prevents an
+  // incomplete translation from making a riddle unplayable in the future.
+  translations: { ar: puzzle, en: puzzle, fr: puzzle, es: puzzle },
+});
+
+const logicalPuzzles: ArabicPuzzle[] = [
+  { question: `عندك ${ltrNumber(9)} كرات متشابهة، واحدة أثقل من الباقي، وميزان كفتين. ما أقل عدد من الوزنات لمعرفة الكرة؟`, answers: ["2", "اثنان"], hint: "قسّم الكرات إلى ثلاث مجموعات متساوية." },
+  { question: `عندك ${ltrNumber(12)} قطعة نقدية، واحدة مختلفة في الوزن، وميزان كفتين. ما أقل عدد من الوزنات لمعرفة القطعة؟`, answers: ["3", "ثلاث"], hint: "هذا لغز الميزان الكلاسيكي." },
+  { question: `أربعة أشخاص يعبرون جسراً ليلاً: أزمنتهم ${ltrNumber(1)} و${ltrNumber(2)} و${ltrNumber(7)} و${ltrNumber(10)} دقائق، والمصباح واحد. ما أقل وقت لعبورهم جميعاً؟`, answers: ["17", "سبعة عشر"], hint: "الأسرعان يعيدان المصباح." },
+  { question: "في عائلة يوجد أبوان وابنان، لكن عدد الأشخاص ثلاثة فقط. كيف؟", answers: ["جد وأب وابن", "جد اب وابن"], hint: "الأب ابنٌ أيضاً." },
+  { question: "لرجل سبع بنات، ولكل بنت أخ واحد. كم عدد الأبناء؟", answers: ["8", "ثمانية"], hint: "الأخ مشترك بينهن." },
+  { question: "ثلاث قطط تصطاد ثلاث فئران في ثلاث دقائق. كم دقيقة تحتاج مئة قطة لاصطياد مئة فأر؟", answers: ["3", "ثلاث"], hint: "كل قطة تصطاد فأراً في الوقت نفسه." },
+  { question: "أيهما أثقل: كيلوغرام من الحديد أم كيلوغرام من الريش؟", answers: ["متساويان", "متساوي"], hint: "قارن الكتلة لا الحجم." },
+  { question: `مكعب مكوّن من ${ltrNumber(27)} مكعباً صغيراً طُليت كل أوجهه ثم فُكك. كم مكعباً صغيراً بلا طلاء؟`, answers: ["1", "واحد"], hint: "فكّر في المكعب الموجود في الوسط." },
+  { question: "كم شهراً في السنة يحتوي على 28 يوماً؟", answers: ["12", "اثنا عشر"], hint: "كل الشهور فيها على الأقل 28 يوماً." },
+  { question: "أمامك ثلاثة مفاتيح خارج غرفة مغلقة، وداخلها مصباح واحد. كيف تميّز مفتاح المصباح بدخول واحد؟ ما الدليل الذي تستعمله؟", answers: ["حرارة المصباح", "حرارة"], hint: "شغّل مفتاحاً ثم أطفئه قبل الدخول." },
+  { question: "ثلاثة صناديق مكتوب عليها: تفاح، برتقال، مختلط. كل الملصقات خاطئة. من أي صندوق تبدأ بسحب ثمرة واحدة؟", answers: ["مختلط", "الصندوق المختلط"], hint: "اختر الملصق الذي لا يمكن أن يكون صحيحاً." },
+  { question: "في سباق، تجاوزتَ الشخص الذي في المرتبة الثانية. ما هي مرتبتك الآن؟", answers: ["الثانية", "ثاني"], hint: "لم تتجاوز المتسابق الأول." },
+  { question: "رجل قصير يسكن في الطابق العشرين، يصعد بالمصعد إلى العاشر ثم يكمل مشياً، إلا في الأيام الماطرة. لماذا؟", answers: ["قصير", "قصير القامة"], hint: "في المطر يحمل شيئاً أطول منه." },
+  { question: "رجل خرج تحت المطر بلا مظلة ولا قبعة، ولم تبتل شعرة واحدة من رأسه. لماذا؟", answers: ["أصلع", "كان أصلع"], hint: "المشكلة ليست في المطر." },
+  { question: "ما الشيء الذي إذا نطقت باسمه كسرته؟", answers: ["الصمت", "صمت"], hint: "يتطلب بقاءه عدم الكلام." },
+  { question: `ما العدد التالي في النمط: ${ltrNumber(1)}، ${ltrNumber(11)}، ${ltrNumber(21)}، ${ltrNumber(1211)}، ؟`, answers: ["111221"], hint: "كل حد يصف أرقام الحد الذي قبله." },
+  { question: `ما العدد التالي: ${ltrNumber(2)}، ${ltrNumber(3)}، ${ltrNumber(5)}، ${ltrNumber(9)}، ${ltrNumber(17)}، ؟`, answers: ["33"], hint: "أضف ضعف الزيادة السابقة." },
+  { question: `ما العدد التالي: ${ltrNumber(1)}، ${ltrNumber(2)}، ${ltrNumber(6)}، ${ltrNumber(24)}، ${ltrNumber(120)}، ؟`, answers: ["720"], hint: "كل مرة اضرب في العدد التالي." },
+  { question: `ما العدد التالي: ${ltrNumber(3)}، ${ltrNumber(6)}، ${ltrNumber(11)}، ${ltrNumber(18)}، ؟`, answers: ["27"], hint: "الزيادات هي أعداد فردية متتالية." },
+  { question: `ما العدد التالي: ${ltrNumber(81)}، ${ltrNumber(27)}، ${ltrNumber(9)}، ${ltrNumber(3)}، ؟`, answers: ["1", "واحد"], hint: "القسمة ثابتة." },
+  { question: `ما العدد التالي: ${ltrNumber(4)}، ${ltrNumber(7)}، ${ltrNumber(13)}، ${ltrNumber(25)}، ؟`, answers: ["49"], hint: "اضرب الفرق في اثنين." },
+  { question: `ما العدد التالي: ${ltrNumber(1)}، ${ltrNumber(4)}، ${ltrNumber(10)}، ${ltrNumber(22)}، ؟`, answers: ["46"], hint: "كل حد يساوي السابق في اثنين زائد اثنين." },
+  { question: "إذا كان أمس هو غد الخميس، فما هو اليوم؟", answers: ["السبت", "سبت"], hint: "حوّل عبارة أمس إلى اليوم الحالي أولاً." },
+  { question: "لديك حبلان، كل واحد يحترق في ساعة لكن بشكل غير منتظم. كيف تقيس 45 دقيقة؟", answers: ["45", "خمسة واربعون"], hint: "أشعل الحبل الأول من الطرفين والثاني من طرف واحد." },
+  { question: "أمامك بابان: أحدهما للنجاة والآخر للخطر، وحارسان أحدهما يكذب دائماً. ما السؤال الذي تسأله لتعرف باب النجاة؟", answers: ["ماذا سيقول الآخر", "الآخر"], hint: "اسأل أي حارس عن جواب الحارس الثاني ثم اختر العكس." },
+  { question: "طبيب أعطاك ثلاث حبات دواء وقال: خذ حبة كل نصف ساعة. كم تستغرق لإنهائها؟", answers: ["ساعة", "60"], hint: "الحبة الأولى تؤخذ فوراً." },
+  { question: "سقطت طائرة على الحدود بين بلدين. أين يدفنون الناجين؟", answers: ["لا يدفنون", "لايدفنون"], hint: "الناجون أحياء." },
+  { question: "لديك ستة جوارب سوداء وستة بيضاء في الظلام. كم جورباً تسحب لتضمن زوجاً من اللون نفسه؟", answers: ["3", "ثلاث"], hint: "فكّر في أسوأ احتمال." },
+  { question: "أي مكان على الأرض إذا مشيت منه جنوباً ثم شرقاً ثم شمالاً تعود إليه؟", answers: ["القطب الشمالي", "القطب"], hint: "ابدأ من أقصى الشمال." },
+  { question: "شخص ينظر إلى صورة ويقول: ليس لي أخ أو أخت، لكن والد هذا الرجل هو ابن أبي. من في الصورة؟", answers: ["ابنه", "ابن"], hint: "ابن أبي هو المتكلم نفسه." },
+  { question: "أم أحمد لديها أربعة أبناء: شمال وجنوب وشرق. ما اسم الابن الرابع؟", answers: ["أحمد"], hint: "الاسم مذكور في بداية السؤال." },
+  { question: "ما العدد الذي إذا ضربته في نفسه ثم أضفت إليه نفسه كان الناتج 42؟", answers: ["6", "ستة"], hint: "حل المعادلة س² + س = 42." },
+  { question: "في ساعة عقاربها متطابقة عند الثانية عشرة. كم مرة تتطابق العقارب خلال 12 ساعة؟", answers: ["11", "احد عشر"], hint: "لا تتطابق تماماً عند كل ساعة." },
+  { question: "أب عمره أربعة أضعاف عمر ابنه. بعد 20 سنة سيصبح عمره ضعف عمر ابنه. كم عمر الابن الآن؟", answers: ["10", "عشرة"], hint: "ضع عمر الابن سناً." },
+  { question: "لديك إناء 3 لترات وإناء 5 لترات فقط. كم لتراً يمكنك قياسه بدقة باستعمالهما؟", answers: ["4", "أربعة"], hint: "املأ الكبير ثم انقل منه إلى الصغير مرتين." },
+  { question: "ثلاثة أرقام مجموعها 6 وحاصل ضربها 6. ما هي؟", answers: ["123", "1 2 3"], hint: "استعمل أصغر الأعداد الموجبة." },
+  { question: "ما العدد الذي إذا قلبته أصبح أكبر؟", answers: ["6", "ستة"], hint: "فكّر في شكله عند تدويره." },
+  { question: "في قرية، الحلاق يحلق لكل من لا يحلق لنفسه فقط. هل يحلق الحلاق لنفسه؟", answers: ["مستحيل", "لا يمكن"], hint: "أي جواب يؤدي إلى تناقض." },
+  { question: "كم حيواناً من كل نوع أخذ موسى في سفينته؟", answers: ["صفر", "0"], hint: "صاحب السفينة ليس موسى." },
+  { question: "ما الشيء الذي له مدن بلا بيوت وأنهار بلا ماء وحدود بلا أرض؟", answers: ["خريطة", "الخريطة"], hint: "هو تمثيل لمكان حقيقي." },
+  { question: "إذا كان لديك عود ثقاب واحد ودخلت غرفة فيها شمعة وموقد ومصباح زيت، ماذا تشعل أولاً؟", answers: ["عود الثقاب", "عود"], hint: "لا يمكنك إشعال شيء قبل مصدر النار." },
+  { question: "ما الشيء الذي يملأ الغرفة لكنه لا يشغل حيزاً؟", answers: ["الضوء", "ضوء"], hint: "يمكنه دخول كل زاوية." },
+  { question: "ما الشيء الذي كلما زاد نقص؟", answers: ["العمر", "عمر"], hint: "مرور الوقت يزيده لكنه يقلل الباقي منه." },
+  { question: "امرأة لديها 17 خروفاً، ماتت كلها إلا 9. كم بقي؟", answers: ["9", "تسعة"], hint: "اقرأ عبارة إلا بدقة." },
+  { question: "رجل بنى بيتاً كل جدرانه تتجه جنوباً. مر دب بجانبه، ما لون الدب؟", answers: ["أبيض", "ابيض"], hint: "هذا ممكن قرب القطب الشمالي فقط." },
 ];
 
-const generateNumericRiddles = (startId: number, endId: number): Riddle[] =>
-  Array.from({ length: endId - startId + 1 }, (_, index) => {
-    const id = startId + index;
-    const n = id;
-    const template = numericTemplates[index % numericTemplates.length];
-    const answer = `${n + 1}`;
-
-    return {
-      id,
-      translations: {
-        ar: {
-          question: template.ar(n),
-          answers: [answer],
-          hint: template.hintAr(n),
-        },
-        en: {
-          question: template.en(n),
-          answers: [answer],
-          hint: template.hintEn(n),
-        },
-        fr: {
-          question: template.fr(n),
-          answers: [answer],
-          hint: template.hintFr(n),
-        },
-        es: {
-          question: template.es(n),
-          answers: [answer],
-          hint: template.hintEs(n),
-        },
-      },
-    };
-  });
+const logicalRiddles = logicalPuzzles.map((puzzle, index) => logicalRiddle(index + baseRiddles.length + 1, puzzle));
 
 export const riddles: Riddle[] = [
   ...baseRiddles,
-  ...generateNumericRiddles(11, 1000),
+  ...logicalRiddles,
 ];
