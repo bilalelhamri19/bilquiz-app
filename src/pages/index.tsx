@@ -135,7 +135,7 @@ const saveProgress = (p: Progress) => {
 
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>("groupSelect");
+  const [appState, setAppState] = useState<AppState>("welcome");
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
@@ -211,6 +211,8 @@ const Index = () => {
     setResolvedQuestions(resolvedQuestionIndexes);
     setIsQuestionTransitioning(false);
     setProgress((current) => ({ ...current, lastGroupIndex: groupIndex }));
+    // Start audio directly from the player's click so browsers allow playback.
+    startBackgroundMusic();
     setAppState("quiz");
   };
 
@@ -407,7 +409,7 @@ const Index = () => {
             </div>
           )}
 
-          {appState === "groupSelect" ? (
+          {appState === "welcome" ? (
             <button
               type="button"
               onClick={() => setIsSettingsOpen(true)}
@@ -431,7 +433,7 @@ const Index = () => {
                 className="w-full">
                 <WelcomeScreen
                   language={language}
-                  onStartQuiz={() => startGroup(Math.min(progress.lastGroupIndex, totalGroups - 1))}
+                  onStartQuiz={() => setAppState("groupSelect")}
                 />
               </motion.div>
             )}
