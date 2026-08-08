@@ -226,7 +226,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
             {/* Answer Slots Display */}
             <div className="flex flex-wrap justify-center gap-6 py-2">
               {wordSlots.map((word, wordIdx) => (
-                <div key={wordIdx} className="flex gap-1.5 flex-row-reverse">
+                <div key={wordIdx} className="flex gap-1.5">
                   {word.map((slotIndex) => {
                     const selectedItem = selected[slotIndex];
                     return (
