@@ -188,24 +188,6 @@ const Index = () => {
     return stopBackgroundMusic;
   }, []);
 
-  useEffect(() => {
-    if (!hasMounted || !soundEnabled) return;
-
-    const startMusicOnFirstInteraction = () => {
-      document.removeEventListener("pointerdown", startMusicOnFirstInteraction, true);
-      document.removeEventListener("keydown", startMusicOnFirstInteraction, true);
-      startBackgroundMusic();
-    };
-
-    document.addEventListener("pointerdown", startMusicOnFirstInteraction, true);
-    document.addEventListener("keydown", startMusicOnFirstInteraction, true);
-
-    return () => {
-      document.removeEventListener("pointerdown", startMusicOnFirstInteraction, true);
-      document.removeEventListener("keydown", startMusicOnFirstInteraction, true);
-    };
-  }, [hasMounted, soundEnabled]);
-
   // Build GroupInfo array for the selector
   const groupInfos: GroupInfo[] = allGroups.map((grp, i) => ({
     index: i,
@@ -453,7 +435,10 @@ const Index = () => {
                 className="w-full">
                 <WelcomeScreen
                   language={language}
-                  onStartQuiz={() => setAppState("groupSelect")}
+                  onStartQuiz={() => {
+                    startBackgroundMusic();
+                    setAppState("groupSelect");
+                  }}
                 />
               </motion.div>
             )}
