@@ -135,7 +135,7 @@ const saveProgress = (p: Progress) => {
 
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>("welcome");
+  const [appState, setAppState] = useState<AppState>("groupSelect");
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
@@ -397,18 +397,14 @@ const Index = () => {
             </div>
           )}
 
-          {appState === "welcome" ? (
-            <button
-              type="button"
-              onClick={() => setIsSettingsOpen(true)}
-              aria-label="الإعدادات"
-              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-            >
-              <Settings size={20} />
-            </button>
-          ) : (
-            <div aria-hidden="true" className="h-10 w-10" />
-          )}
+          <button
+            type="button"
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label="الإعدادات"
+            className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+          >
+            <Settings size={20} />
+          </button>
         </nav>
 
         {/* ── Main ── */}

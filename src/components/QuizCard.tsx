@@ -16,7 +16,6 @@ interface QuizCardProps {
   onAnswerPendingChange: (isPending: boolean) => void;
 }
 
-const QUESTION_TIME_SECONDS = 60;
 const HINT_COST = 10;
 
 const normalize = (value: string) =>
@@ -42,7 +41,6 @@ const NUMERIC_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip, onAnswerPendingChange }: QuizCardProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_SECONDS);
   const correctAnswerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const t = ui[language];
@@ -70,7 +68,6 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
   useEffect(() => {
     setSelected([]);
     setIsCorrect(null);
-    setTimeLeft(QUESTION_TIME_SECONDS);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
     const answerChars = Array.from(cleanAnswer);
@@ -108,22 +105,6 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
       onAnswerPendingChange(false);
     };
   }, [onAnswerPendingChange]);
-
-  // Timer effect
-  useEffect(() => {
-    if (isCorrect !== null) return; // Stop timer if answered
-
-    if (timeLeft <= 0) {
-      onSkip(); // Skip automatically when timer hits 0
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft, isCorrect, onSkip]);
 
   const checkAnswer = (currentSelection: { char: string; poolIndex: number }[]) => {
     const answerString = currentSelection.map((s) => s.char).join("");
@@ -227,9 +208,6 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
                 <bdi dir="ltr" className="font-bold text-sm">{coins}</bdi>
               </div>
               <div className="flex items-center gap-3">
-                <div className={`text-sm font-bold px-2.5 py-1 rounded-lg transition-colors ${timeLeft <= 5 ? "bg-red-500/20 text-red-400 animate-pulse" : "bg-white/10 text-white/70"}`}>
-                  ⏳ <bdi dir="ltr">{timeLeft}</bdi> ث
-                </div>
                 <span className="text-white/40 text-sm font-medium">
                   سؤال <bdi dir="ltr">{riddle.id}</bdi>
                 </span>
