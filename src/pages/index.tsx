@@ -411,18 +411,14 @@ const Index = () => {
             </div>
           )}
 
-          {appState === "welcome" ? (
-            <button
-              type="button"
-              onClick={() => setIsSettingsOpen(true)}
-              aria-label="الإعدادات"
-              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-            >
-              <Settings size={20} />
-            </button>
-          ) : (
-            <div aria-hidden="true" className="h-10 w-10" />
-          )}
+          <button
+            type="button"
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label="الإعدادات"
+            className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+          >
+            <Settings size={20} />
+          </button>
         </nav>
 
         {/* ── Main ── */}
