@@ -42,11 +42,27 @@ const loadProgress = (): Progress => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const saved = JSON.parse(raw) as Partial<Progress>;
+      const completedGroups = Object.fromEntries(
+        Object.entries(saved.completedGroups ?? {}).filter(
+          ([, score]) => typeof score === "number" && score >= MIN_SCORE_TO_UNLOCK_GROUP
+        )
+      ) as Record<number, number>;
+
+      // Rebuild unlocks from passed groups so progress created before the
+      // six-correct-answer rule cannot keep later groups unlocked.
+      const unlockedGroups = [0];
+      while (completedGroups[unlockedGroups.length - 1] !== undefined) {
+        unlockedGroups.push(unlockedGroups.length);
+      }
+
       return {
-        unlockedGroups: saved.unlockedGroups ?? [0],
-        completedGroups: saved.completedGroups ?? {},
+        unlockedGroups,
+        completedGroups,
         coins: typeof saved.coins === "number" ? saved.coins : 0,
-        lastGroupIndex: typeof saved.lastGroupIndex === "number" ? saved.lastGroupIndex : 0,
+        lastGroupIndex: Math.min(
+          typeof saved.lastGroupIndex === "number" ? saved.lastGroupIndex : 0,
+          unlockedGroups.length - 1
+        ),
       };
     }
   } catch {}
@@ -146,13 +162,16 @@ const Index = () => {
         const newProgress: Progress = {
           ...current,
           unlockedGroups: [...current.unlockedGroups],
-          completedGroups: {
-            ...current.completedGroups,
-            [currentGroupIndex]: Math.max(
-              score,
-              current.completedGroups[currentGroupIndex] ?? 0
-            ),
-          },
+          completedGroups:
+            score >= MIN_SCORE_TO_UNLOCK_GROUP
+              ? {
+                  ...current.completedGroups,
+                  [currentGroupIndex]: Math.max(
+                    score,
+                    current.completedGroups[currentGroupIndex] ?? 0
+                  ),
+                }
+              : current.completedGroups,
         };
 
         // Unlock next group if it exists and isn't already unlocked
