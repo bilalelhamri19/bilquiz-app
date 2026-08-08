@@ -12,7 +12,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 
 // ─── Config ────────────────────────────────────────────────────────────────
-const QUESTIONS_PER_GROUP = 15;
+const QUESTIONS_PER_GROUP = 8;
 const STORAGE_KEY = "bilquiz_progress";
 
 // Split riddles into groups of 15
