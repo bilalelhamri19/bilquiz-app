@@ -89,6 +89,7 @@ const Index = () => {
   }, [progress, hasMounted]);
 
   useEffect(() => {
+    setProgress(loadProgress());
     setHasMounted(true);
     const timer = window.setTimeout(() => setIsLoading(false), 1800);
     return () => window.clearTimeout(timer);
