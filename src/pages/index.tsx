@@ -95,7 +95,7 @@ const saveProgress = (p: Progress) => {
 
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
-  const [appState, setAppState] = useState<AppState>("welcome");
+  const [appState, setAppState] = useState<AppState>("groupSelect");
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
