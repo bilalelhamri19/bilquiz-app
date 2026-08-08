@@ -167,11 +167,10 @@ const Index = () => {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div
-              className="h-9 w-9 rounded-xl flex items-center justify-center text-white font-black text-lg cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #10b981, #6366f1)" }}
+              className="h-10 w-10 rounded-xl overflow-hidden cursor-pointer flex-shrink-0"
               onClick={() => appState !== "welcome" && setAppState("groupSelect")}
             >
-              ب
+              <img src="/logo.jpeg" alt="BilQuiz Logo" className="h-full w-full object-cover" />
             </div>
             <span className="text-white font-bold text-lg hidden sm:block">BilQuiz</span>
           </div>

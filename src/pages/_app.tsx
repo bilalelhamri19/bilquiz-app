@@ -13,8 +13,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:description" content="تطبيق ألغاز ممتع لتتحدى أصدقاءك وتختبر ذكاءك مع BilQuiz!" />
         <meta property="og:type" content="website" />
         <meta name="theme-color" content="#10b981" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
+        <link rel="apple-touch-icon" href="/logo.jpeg" />
         <link rel="manifest" href="/manifest.json" />
+        <meta property="og:image" content="/logo.jpeg" />
       </Head>
       <Component {...pageProps} />
     </>
