@@ -1,7 +1,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
-import { Coins } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -219,14 +218,8 @@ const Index = () => {
           )}
 
           {/* Right badge */}
-          <div className="flex items-center gap-3">
-            <div className="glass rounded-full px-3 py-1.5 flex items-center gap-1.5 text-amber-300" aria-label={`${progress.coins} coins`}>
-              <Coins size={16} fill="currentColor" />
-              <span className="font-bold text-sm">{progress.coins}</span>
-            </div>
-            <div className="badge-ar hidden sm:block">
-              {totalGroups} مجموعة
-            </div>
+          <div className="badge-ar hidden sm:block">
+            {totalGroups} مجموعة
           </div>
         </nav>
 

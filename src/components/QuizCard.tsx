@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Riddle, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
-import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2 } from "lucide-react";
+import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { playCorrect, playWrong } from "@/lib/audio";
 
@@ -204,7 +204,10 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
           {/* Header */}
           <div className="p-6 pb-4 border-b border-white/6">
             <div className="flex items-center justify-between mb-4">
-              <span className="badge-ar">عربي 🌙</span>
+              <div className="glass rounded-full px-3 py-1.5 flex items-center gap-1.5 text-amber-300" aria-label={`${coins} coins`}>
+                <Coins size={16} fill="currentColor" />
+                <span className="font-bold text-sm">{coins}</span>
+              </div>
               <div className="flex items-center gap-3">
                 <div className={`text-sm font-bold px-2.5 py-1 rounded-lg transition-colors ${timeLeft <= 5 ? "bg-red-500/20 text-red-400 animate-pulse" : "bg-white/10 text-white/70"}`}>
                   ⏳ {timeLeft} ث
