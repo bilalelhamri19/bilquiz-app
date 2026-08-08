@@ -177,14 +177,16 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    if (appState === "quiz" && soundEnabled) {
+    if (!hasMounted) return;
+
+    if (soundEnabled) {
       startBackgroundMusic();
     } else {
       stopBackgroundMusic();
     }
 
     return stopBackgroundMusic;
-  }, [appState, soundEnabled]);
+  }, [hasMounted, soundEnabled]);
 
   // Build GroupInfo array for the selector
   const groupInfos: GroupInfo[] = allGroups.map((grp, i) => ({

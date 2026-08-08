@@ -67,7 +67,7 @@ const playBackgroundMeasure = () => {
   const ctx = getAudioContext();
   if (!ctx) return;
 
-  if (ctx.state === "suspended") ctx.resume();
+  if (ctx.state === "suspended") void ctx.resume().catch(() => {});
 
   const stepDuration = 0.32;
   const startTime = ctx.currentTime + 0.05;
@@ -97,7 +97,10 @@ const playBackgroundMeasure = () => {
 };
 
 export const startBackgroundMusic = () => {
-  if (!soundEnabled || backgroundMusicTimer) return;
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (ctx?.state === "suspended") void ctx.resume().catch(() => {});
+  if (backgroundMusicTimer) return;
   playBackgroundMeasure();
   backgroundMusicTimer = window.setInterval(playBackgroundMeasure, 5120);
 };
