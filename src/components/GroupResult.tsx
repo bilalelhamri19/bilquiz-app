@@ -11,6 +11,8 @@ interface GroupResultProps {
   score: number;
   total: number;
   isLastGroup: boolean;
+  canUnlockNextGroup: boolean;
+  requiredScoreToUnlock: number;
   dir?: "rtl" | "ltr";
   onNextGroup: () => void;
   onBackToGroups: () => void;
@@ -23,6 +25,8 @@ const GroupResult = ({
   score,
   total,
   isLastGroup,
+  canUnlockNextGroup,
+  requiredScoreToUnlock,
   dir = "rtl",
   onNextGroup,
   onBackToGroups,
@@ -81,7 +85,7 @@ const GroupResult = ({
         transition={{ delay: 0.2 }}
         className="text-3xl font-black text-white mb-2"
       >
-        المجموعة {groupIndex + 1} مكتملة!
+        انتهت المجموعة {groupIndex + 1}!
       </motion.h2>
 
       <motion.p
@@ -137,7 +141,7 @@ const GroupResult = ({
       </motion.div>
 
       {/* Unlock Message */}
-      {!isLastGroup && (
+      {!isLastGroup && canUnlockNextGroup && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -151,6 +155,19 @@ const GroupResult = ({
         </motion.div>
       )}
 
+      {!isLastGroup && !canUnlockNextGroup && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="glass rounded-xl p-3 mb-6 border border-amber-500/20"
+        >
+          <p className="text-amber-300 text-sm font-bold">
+            خصك {requiredScoreToUnlock}/{total} أجوبة صحيحة باش تحل المجموعة {groupIndex + 2}.
+          </p>
+        </motion.div>
+      )}
+
       {/* Action Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -158,7 +175,7 @@ const GroupResult = ({
         transition={{ delay: 0.8 }}
         className="space-y-3"
       >
-        {!isLastGroup && (
+        {!isLastGroup && canUnlockNextGroup && (
           <button
             onClick={onNextGroup}
             className="btn-primary w-full rounded-2xl py-4 text-base font-bold flex items-center justify-center gap-2"

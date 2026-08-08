@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 8;
+const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
 const COINS_PER_CORRECT_ANSWER = 5;
 
@@ -129,8 +130,7 @@ const Index = () => {
   };
 
   const handleSkip = () => {
-    const ans = currentRiddle.translations[language].answers[0];
-    toast({ title: t.skipped, description: t.skippedDesc(ans) });
+    toast({ title: t.skipped });
     advanceQuestion(groupScore);
   };
 
@@ -160,10 +160,17 @@ const Index = () => {
 
         // Unlock next group if it exists and isn't already unlocked
         const nextGroup = currentGroupIndex + 1;
-        if (nextGroup < totalGroups && !newProgress.unlockedGroups.includes(nextGroup)) {
+        if (
+          score >= MIN_SCORE_TO_UNLOCK_GROUP &&
+          nextGroup < totalGroups &&
+          !newProgress.unlockedGroups.includes(nextGroup)
+        ) {
           newProgress.unlockedGroups.push(nextGroup);
         }
-        newProgress.lastGroupIndex = nextGroup < totalGroups ? nextGroup : currentGroupIndex;
+        newProgress.lastGroupIndex =
+          score >= MIN_SCORE_TO_UNLOCK_GROUP && nextGroup < totalGroups
+            ? nextGroup
+            : currentGroupIndex;
 
         return newProgress;
       });
@@ -326,6 +333,8 @@ const Index = () => {
                   score={groupScore}
                   total={currentGroupQuestions.length}
                   isLastGroup={currentGroupIndex === totalGroups - 1}
+                  canUnlockNextGroup={groupScore >= MIN_SCORE_TO_UNLOCK_GROUP}
+                  requiredScoreToUnlock={MIN_SCORE_TO_UNLOCK_GROUP}
                   dir={dir}
                   onNextGroup={() => startGroup(currentGroupIndex + 1)}
                   onBackToGroups={() => setAppState("groupSelect")}
