@@ -38,6 +38,7 @@ const isNumeric = (value: string) => /^\d+$/.test(value);
 
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
 const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+const NUMERIC_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip, onAnswerPendingChange }: QuizCardProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -73,7 +74,11 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
     const answerChars = Array.from(cleanAnswer);
-    const alphabet = language === "ar" ? ARABIC_LETTERS : LATIN_LETTERS;
+    const alphabet = isNumeric(primaryAnswer)
+      ? NUMERIC_DIGITS
+      : language === "ar"
+      ? ARABIC_LETTERS
+      : LATIN_LETTERS;
 
     // Calculate balanced grid size (even number, minimum 12, at least 4 distractors)
     let targetSize = answerChars.length + 4;
