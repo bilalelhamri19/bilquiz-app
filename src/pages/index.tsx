@@ -179,13 +179,31 @@ const Index = () => {
   useEffect(() => {
     if (!hasMounted) return;
 
-    if (soundEnabled) {
-      startBackgroundMusic();
-    } else {
+    if (!soundEnabled) {
       stopBackgroundMusic();
     }
+  }, [hasMounted, soundEnabled]);
 
+  useEffect(() => {
     return stopBackgroundMusic;
+  }, []);
+
+  useEffect(() => {
+    if (!hasMounted || !soundEnabled) return;
+
+    const startMusicOnFirstInteraction = () => {
+      document.removeEventListener("pointerdown", startMusicOnFirstInteraction, true);
+      document.removeEventListener("keydown", startMusicOnFirstInteraction, true);
+      startBackgroundMusic();
+    };
+
+    document.addEventListener("pointerdown", startMusicOnFirstInteraction, true);
+    document.addEventListener("keydown", startMusicOnFirstInteraction, true);
+
+    return () => {
+      document.removeEventListener("pointerdown", startMusicOnFirstInteraction, true);
+      document.removeEventListener("keydown", startMusicOnFirstInteraction, true);
+    };
   }, [hasMounted, soundEnabled]);
 
   // Build GroupInfo array for the selector
