@@ -222,10 +222,7 @@ const Index = () => {
             </div>
           )}
 
-          {/* Right badge */}
-          <div className="badge-ar hidden sm:block">
-            {totalGroups} مجموعة
-          </div>
+          <div aria-hidden="true" />
         </nav>
 
         {/* ── Main ── */}
@@ -275,6 +272,36 @@ const Index = () => {
                   </div>
                   <div className="progress-bar">
                     <motion.div className="progress-fill" animate={{ width: `${progressPercent}%` }} />
+                  </div>
+                </div>
+
+                {/* Question list for the active group */}
+                <div className="glass rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white font-bold text-sm">أسئلة المجموعة</span>
+                    <span className="text-white/40 text-xs">{currentGroupQuestions.length} أسئلة</span>
+                  </div>
+                  <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                    {currentGroupQuestions.map((_, index) => {
+                      const isCurrentQuestion = index === questionInGroup;
+                      const isPastQuestion = index < questionInGroup;
+
+                      return (
+                        <div
+                          key={index}
+                          aria-current={isCurrentQuestion ? "step" : undefined}
+                          className={`rounded-lg py-2 text-center text-sm font-bold ${
+                            isCurrentQuestion
+                              ? "bg-emerald-500 text-slate-950"
+                              : isPastQuestion
+                              ? "bg-violet-500/20 text-violet-300"
+                              : "bg-white/5 text-white/40"
+                          }`}
+                        >
+                          {index + 1}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
