@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Lock, CheckCircle, Star, ChevronLeft, ChevronDown, ChevronRight } from "lucide-react";
 import { getStars } from "@/lib/scoring";
 
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 6;
 
 export interface GroupInfo {
   index: number;
