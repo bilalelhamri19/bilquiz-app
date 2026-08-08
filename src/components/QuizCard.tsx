@@ -30,19 +30,11 @@ const normalize = (value: string) =>
 const normalizeForCompare = (value: string) =>
   normalize(value).replace(/\s+/g, "");
 
-const getFirstLetters = (value: string) =>
-  value.trim().split(/\s+/u).map((w) => w.charAt(0) || "").join(" ");
-
-const getWordLengths = (value: string) =>
-  value.trim().split(/\s+/u).map((w) => w.length).join(" / ");
-
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
 const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
 const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) => {
-  const [showHint, setShowHint] = useState(false);
-  const [currentHintIndex, setCurrentHintIndex] = useState(0);
-  const [hintUsageCount, setHintUsageCount] = useState(0);
+  const [isFirstLetterRevealed, setIsFirstLetterRevealed] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_SECONDS);
 
@@ -71,9 +63,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
   useEffect(() => {
     setSelected([]);
     setIsCorrect(null);
-    setShowHint(false);
-    setCurrentHintIndex(0);
-    setHintUsageCount(0);
+    setIsFirstLetterRevealed(false);
     setTimeLeft(QUESTION_TIME_SECONDS);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
@@ -118,12 +108,6 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     return () => clearInterval(timer);
   }, [timeLeft, isCorrect, onSkip]);
 
-  const hintVariants = [
-    { label: "تلميح", text: content.hint },
-    { label: "الحروف الأولى", text: getFirstLetters(primaryAnswer) },
-    { label: "عدد الحروف", text: getWordLengths(primaryAnswer) },
-  ];
-
   const checkAnswer = (currentSelection: { char: string; poolIndex: number }[]) => {
     const answerString = currentSelection.map((s) => s.char).join("");
     const answers = content.answers;
@@ -139,7 +123,6 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
       setTimeout(() => {
         setSelected([]);
         setIsCorrect(null);
-        setShowHint(false);
         onCorrectAnswer();
       }, 1200);
     } else {
@@ -179,12 +162,15 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     setIsCorrect(null);
   };
 
-  const showRiddleHint = () => {
-    setShowHint(true);
-    if (showHint) {
-      setCurrentHintIndex((current) => Math.min(current + 1, hintVariants.length - 1));
-    }
-    setHintUsageCount((count) => count + 1);
+  const revealFirstLetter = () => {
+    if (selected.length > 0 || isFirstLetterRevealed) return;
+
+    const firstLetter = Array.from(primaryAnswer.replace(/\s+/g, ""))[0];
+    const poolIndex = pool.findIndex((char) => char === firstLetter);
+    if (poolIndex === -1) return;
+
+    setSelected([{ char: firstLetter, poolIndex }]);
+    setIsFirstLetterRevealed(true);
   };
 
   const getGridColsClass = (length: number) => {
@@ -220,25 +206,6 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
               {content.question}
             </h3>
 
-            {/* Hint Panel — shown above the answer area */}
-            <AnimatePresence>
-              {showHint && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginTop: 12 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-2">
-                    <p className="text-amber-400 text-sm font-bold flex items-center gap-2">
-                      💡 {hintVariants[currentHintIndex].label}
-                    </p>
-                    <p className="text-white/70 text-sm">{hintVariants[currentHintIndex].text}</p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
           {/* Body */}
@@ -333,12 +300,12 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
 
             <button
               type="button"
-              onClick={showRiddleHint}
-              disabled={showHint && currentHintIndex >= hintVariants.length - 1}
+              onClick={revealFirstLetter}
+              disabled={selected.length > 0 || isFirstLetterRevealed}
               className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-amber-400 border-amber-500/20 disabled:opacity-30 disabled:pointer-events-none"
             >
               <HelpCircle size={14} />
-              {showHint ? `تلميح ${currentHintIndex + 1}/${hintVariants.length}` : t.hint}
+              {isFirstLetterRevealed ? "تم إظهار أول حرف" : "إظهار أول حرف"}
             </button>
 
             <AnimatePresence>
