@@ -124,7 +124,6 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
 
   const checkAnswer = (currentSelection: { char: string; poolIndex: number }[]) => {
     const answerString = currentSelection.map((s) => s.char).join("");
-    const allAnswers = Object.values(riddle.translations).flatMap((tr) => tr.answers);
     const answers = content.answers;
     const isAnswerCorrect = answers.some(
       (a) => normalizeForCompare(a) === normalizeForCompare(answerString)
@@ -180,7 +179,9 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
 
   const showRiddleHint = () => {
     setShowHint(true);
-    setCurrentHintIndex((current) => Math.min(current + 1, hintVariants.length - 1));
+    if (showHint) {
+      setCurrentHintIndex((current) => Math.min(current + 1, hintVariants.length - 1));
+    }
     setHintUsageCount((count) => count + 1);
   };
 
@@ -331,7 +332,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
             <button
               type="button"
               onClick={showRiddleHint}
-              disabled={currentHintIndex >= hintVariants.length - 1}
+              disabled={showHint && currentHintIndex >= hintVariants.length - 1}
               className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-amber-400 border-amber-500/20 disabled:opacity-30 disabled:pointer-events-none"
             >
               <HelpCircle size={14} />

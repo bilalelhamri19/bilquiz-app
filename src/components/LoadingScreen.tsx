@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const LoadingScreen = () => (
   <div className="min-h-screen bg-app flex items-center justify-center">
@@ -8,7 +9,7 @@ const LoadingScreen = () => (
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         className="mx-auto mb-8 flex h-28 w-28 items-center justify-center rounded-3xl pulse-glow overflow-hidden"
       >
-        <img src="/logo.jpeg" alt="BilQuiz" className="h-full w-full object-cover" />
+        <Image src="/logo.jpeg" alt="BilQuiz" width={112} height={112} priority className="h-full w-full object-cover" />
       </motion.div>
 
       <motion.h1

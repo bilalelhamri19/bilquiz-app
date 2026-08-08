@@ -1,5 +1,6 @@
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -15,7 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 const QUESTIONS_PER_GROUP = 8;
 const STORAGE_KEY = "bilquiz_progress";
 
-// Split riddles into groups of 15
+// Split riddles into groups of 8
 const allGroups = Array.from(
   { length: Math.ceil(riddles.length / QUESTIONS_PER_GROUP) },
   (_, i) => riddles.slice(i * QUESTIONS_PER_GROUP, (i + 1) * QUESTIONS_PER_GROUP)
@@ -170,7 +171,7 @@ const Index = () => {
               className="h-10 w-10 rounded-xl overflow-hidden cursor-pointer flex-shrink-0"
               onClick={() => appState !== "welcome" && setAppState("groupSelect")}
             >
-              <img src="/logo.jpeg" alt="BilQuiz Logo" className="h-full w-full object-cover" />
+              <Image src="/logo.jpeg" alt="BilQuiz Logo" width={40} height={40} priority className="h-full w-full object-cover" />
             </div>
             <span className="text-white font-bold text-lg hidden sm:block">BilQuiz</span>
           </div>

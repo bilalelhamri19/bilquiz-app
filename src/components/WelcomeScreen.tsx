@@ -13,7 +13,7 @@ interface WelcomeScreenProps {
 const features = [
   {
     icon: Brain,
-    title: "أكثر من 1000 سؤال",
+    title: "1000 سؤال",
     desc: "قاعدة أسئلة ضخمة تجعل كل جلسة تجربة جديدة.",
     color: "from-emerald-500/20 to-teal-500/20",
     border: "border-emerald-500/20",
