@@ -1,7 +1,6 @@
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, CheckCircle, Star, ChevronLeft, ChevronDown, ChevronRight } from "lucide-react";
+import { Lock, CheckCircle, Star, ChevronLeft } from "lucide-react";
 import { getStars } from "@/lib/scoring";
 
 const BATCH_SIZE = 6;
@@ -22,25 +21,14 @@ interface GroupSelectProps {
 }
 
 const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) => {
-  // Find the current batch: the batch containing the last unlocked group
+  // Keep previously revealed groups on screen. Each time the player reaches a
+  // new batch, six more group cards are added below the existing ones.
   const lastUnlockedIndex = groups.reduce((last, g, i) => g.isUnlocked ? i : last, 0);
-  const currentBatch = Math.floor(lastUnlockedIndex / BATCH_SIZE);
-  const totalBatches = Math.max(1, Math.ceil(groups.length / BATCH_SIZE));
-  const [viewedBatch, setViewedBatch] = useState(currentBatch);
-
-  // Move forward automatically when a newly unlocked group enters a new batch,
-  // while still allowing the player to revisit earlier batches.
-  useEffect(() => {
-    setViewedBatch((batch) => Math.max(batch, currentBatch));
-  }, [currentBatch]);
-
-  const batchStart = viewedBatch * BATCH_SIZE;
-  const batchEnd = Math.min(batchStart + BATCH_SIZE, groups.length);
-  const visibleGroups = groups.slice(batchStart, batchEnd);
-
-  // Check if all visible groups in current batch are completed
-  const allBatchCompleted = visibleGroups.every((g) => g.isCompleted);
-  const hasNextBatch = batchEnd < groups.length;
+  const revealedGroupCount = Math.min(
+    (Math.floor(lastUnlockedIndex / BATCH_SIZE) + 1) * BATCH_SIZE,
+    groups.length
+  );
+  const visibleGroups = groups.slice(0, revealedGroupCount);
 
   // Progress in current batch
   const completedInBatch = visibleGroups.filter((g) => g.isCompleted).length;
@@ -62,16 +50,7 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
 
         {/* Batch Progress */}
         <div className="glass rounded-2xl px-3 py-3 inline-flex items-center gap-3">
-          <button
-            type="button"
-            aria-label="المجموعات السابقة"
-            onClick={() => setViewedBatch((batch) => Math.max(0, batch - 1))}
-            disabled={viewedBatch === 0}
-            className="p-1 text-white/60 hover:text-white disabled:opacity-20 disabled:pointer-events-none"
-          >
-            <ChevronRight size={18} />
-          </button>
-          <span className="text-white/40 text-sm">المجموعات {batchStart + 1}–{batchEnd}</span>
+          <span className="text-white/40 text-sm">المجموعات 1–{revealedGroupCount}</span>
           <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 rounded-full"
@@ -80,15 +59,6 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
             />
           </div>
           <span className="text-emerald-400 text-sm font-bold">{completedInBatch}/{visibleGroups.length}</span>
-          <button
-            type="button"
-            aria-label="المجموعات التالية"
-            onClick={() => setViewedBatch((batch) => Math.min(totalBatches - 1, batch + 1))}
-            disabled={viewedBatch >= totalBatches - 1}
-            className="p-1 text-white/60 hover:text-white disabled:opacity-20 disabled:pointer-events-none"
-          >
-            <ChevronLeft size={18} />
-          </button>
         </div>
       </motion.div>
 
@@ -171,25 +141,9 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
         })}
       </div>
 
-      {/* Next Batch Banner */}
-      {allBatchCompleted && hasNextBatch && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mt-8 glass rounded-2xl p-5 border border-emerald-500/30 text-center"
-        >
-          <p className="text-emerald-400 font-bold text-lg mb-1">🎉 أحسنت! أكملت هذه المجموعات!</p>
-          <p className="text-white/50 text-sm mb-4">
-            المجموعات {batchEnd + 1}–{Math.min(batchEnd + BATCH_SIZE, groups.length)} متاحة الآن
-          </p>
-          <ChevronDown className="mx-auto text-emerald-400 animate-bounce" size={24} />
-        </motion.div>
-      )}
-
       {/* Total progress footer */}
       <p className="text-center text-white/20 text-xs mt-8">
-        المجموعة {batchStart + 1} إلى {batchEnd} من {groups.length}
+        تظهر المجموعات 1 إلى {revealedGroupCount} من {groups.length}
       </p>
     </div>
   );
