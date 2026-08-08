@@ -6,10 +6,9 @@ const LoadingScreen = () => (
       <motion.div
         animate={{ scale: [0.95, 1.05, 0.95], rotate: [0, 5, -5, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        className="mx-auto mb-8 flex h-28 w-28 items-center justify-center rounded-3xl pulse-glow text-4xl font-black text-white"
-        style={{ background: "linear-gradient(135deg, #10b981, #6366f1)" }}
+        className="mx-auto mb-8 flex h-28 w-28 items-center justify-center rounded-3xl pulse-glow overflow-hidden"
       >
-        ب
+        <img src="/logo.jpeg" alt="BilQuiz" className="h-full w-full object-cover" />
       </motion.div>
 
       <motion.h1
