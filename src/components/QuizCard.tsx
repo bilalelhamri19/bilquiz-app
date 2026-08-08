@@ -13,6 +13,8 @@ interface QuizCardProps {
   onSkip: () => void;
 }
 
+const QUESTION_TIME_SECONDS = 60;
+
 const normalize = (value: string) =>
   value
     .toLowerCase()
@@ -42,7 +44,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [hintUsageCount, setHintUsageCount] = useState(0);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_SECONDS);
 
   const t = ui[language];
   const content = riddle.translations[language];
@@ -72,7 +74,7 @@ const QuizCard = ({ riddle, language, onCorrectAnswer, onSkip }: QuizCardProps) 
     setShowHint(false);
     setCurrentHintIndex(0);
     setHintUsageCount(0);
-    setTimeLeft(30);
+    setTimeLeft(QUESTION_TIME_SECONDS);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
     const answerChars = Array.from(cleanAnswer);
