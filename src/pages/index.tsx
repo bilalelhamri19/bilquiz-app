@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import { Settings, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -10,11 +11,13 @@ import GroupResult from "@/components/GroupResult";
 import { riddles, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Toaster } from "@/components/ui/toaster";
+import { setSoundEnabled } from "@/lib/audio";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 8;
 const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
+const SOUND_STORAGE_KEY = "bilquiz_sound_enabled";
 const COINS_PER_CORRECT_ANSWER = 5;
 
 // Split riddles into groups of 8
@@ -83,6 +86,8 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [soundEnabled, setSoundEnabledState] = useState(true);
 
   // Current session
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
@@ -105,6 +110,12 @@ const Index = () => {
 
   useEffect(() => {
     setProgress(loadProgress());
+    try {
+      const savedSoundSetting = localStorage.getItem(SOUND_STORAGE_KEY);
+      const enabled = savedSoundSetting !== "false";
+      setSoundEnabledState(enabled);
+      setSoundEnabled(enabled);
+    } catch {}
     setHasMounted(true);
     const timer = window.setTimeout(() => setIsLoading(false), 1800);
     return () => window.clearTimeout(timer);
@@ -141,6 +152,15 @@ const Index = () => {
 
   const spendCoins = (amount: number) => {
     setProgress((current) => ({ ...current, coins: current.coins - amount }));
+  };
+
+  const toggleSound = () => {
+    const nextValue = !soundEnabled;
+    setSoundEnabledState(nextValue);
+    setSoundEnabled(nextValue);
+    try {
+      localStorage.setItem(SOUND_STORAGE_KEY, String(nextValue));
+    } catch {}
   };
 
   const handleSkip = () => {
@@ -245,7 +265,14 @@ const Index = () => {
             </div>
           )}
 
-          <div aria-hidden="true" />
+          <button
+            type="button"
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label="الإعدادات"
+            className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
+          >
+            <Settings size={20} />
+          </button>
         </nav>
 
         {/* ── Main ── */}
@@ -367,6 +394,65 @@ const Index = () => {
           BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال
         </footer>
       </div>
+
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
+            onClick={() => setIsSettingsOpen(false)}
+          >
+            <motion.section
+              dir="rtl"
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.2 }}
+              className="glass w-full max-w-sm rounded-3xl border border-white/10 p-6 shadow-2xl"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="settings-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  type="button"
+                  onClick={() => setIsSettingsOpen(false)}
+                  aria-label="إغلاق الإعدادات"
+                  className="text-white/50 hover:text-white"
+                >
+                  <X size={22} />
+                </button>
+                <h2 id="settings-title" className="text-xl font-black text-white flex items-center gap-2">
+                  <Settings size={20} className="text-emerald-400" /> الإعدادات
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={toggleSound}
+                className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-right hover:bg-white/10"
+              >
+                <span className="flex items-center gap-3 text-white font-bold">
+                  {soundEnabled ? <Volume2 className="text-emerald-400" /> : <VolumeX className="text-white/40" />}
+                  أصوات اللعبة
+                </span>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold ${soundEnabled ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"}`}>
+                  {soundEnabled ? "مفعلة" : "متوقفة"}
+                </span>
+              </button>
+
+              <div className="mt-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-sm text-white/50 leading-relaxed">
+                <p className="font-bold text-white/70 mb-2">قواعد اللعب</p>
+                <p>خصك 6 أجوبة صحيحة من 8 باش تحل المجموعة التالية.</p>
+                <p>كل جواب صحيح كيعطيك 5 coins، والتلميح كيكلف 10 coins.</p>
+              </div>
+            </motion.section>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Toaster />
     </div>

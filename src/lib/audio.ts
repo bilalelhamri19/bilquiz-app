@@ -1,6 +1,11 @@
 // Simple Web Audio API synthesizer for game sounds
 
 let audioCtx: AudioContext | null = null;
+let soundEnabled = true;
+
+export const setSoundEnabled = (enabled: boolean) => {
+  soundEnabled = enabled;
+};
 
 const getAudioContext = () => {
   if (typeof window === "undefined") return null;
@@ -11,6 +16,7 @@ const getAudioContext = () => {
 };
 
 export const playCorrect = () => {
+  if (!soundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;
   
@@ -35,6 +41,7 @@ export const playCorrect = () => {
 };
 
 export const playWrong = () => {
+  if (!soundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;
   
@@ -59,6 +66,7 @@ export const playWrong = () => {
 };
 
 export const playWin = () => {
+  if (!soundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;
   
