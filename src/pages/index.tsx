@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { CircleHelp, Gamepad2, Globe2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, Volume2, VolumeX, X } from "lucide-react";
+import { CircleHelp, Gamepad2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import QuizCard from "@/components/QuizCard";
@@ -21,7 +21,6 @@ const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
 const SOUND_STORAGE_KEY = "bilquiz_sound_enabled";
 const THEME_STORAGE_KEY = "bilquiz_theme";
-const LANGUAGE_STORAGE_KEY = "bilquiz_language";
 const COINS_PER_CORRECT_ANSWER = 5;
 
 // Split riddles into groups of 8
@@ -32,7 +31,6 @@ const allGroups = Array.from(
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type AppState = "welcome" | "groupSelect" | "quiz" | "groupResult";
-type SupportedLanguage = Extract<Language, "ar" | "fr">;
 
 interface Progress {
   unlockedGroups: number[];            // group indices that are unlocked
@@ -145,7 +143,6 @@ const Index = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isLightMode, setIsLightMode] = useState(false);
-  const [language, setLanguage] = useState<SupportedLanguage>("ar");
 
   // Current session
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
@@ -154,9 +151,11 @@ const Index = () => {
   const [resolvedQuestions, setResolvedQuestions] = useState<Set<number>>(new Set());
   const [isQuestionTransitioning, setIsQuestionTransitioning] = useState(false);
 
-  const dir = language === "ar" ? "rtl" : "ltr";
+  const dir = "rtl";
+  const language: Language = "ar";
 
   const t = ui[language];
+
   const currentGroupQuestions = allGroups[currentGroupIndex] ?? [];
   const currentRiddle = currentGroupQuestions[questionInGroup];
   const totalGroups = allGroups.length;
@@ -176,16 +175,9 @@ const Index = () => {
       const lightMode = localStorage.getItem(THEME_STORAGE_KEY) === "light";
       setIsLightMode(lightMode);
       document.documentElement.classList.toggle("theme-light", lightMode);
-      const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (savedLanguage === "ar" || savedLanguage === "fr") setLanguage(savedLanguage);
     } catch {}
     setHasMounted(true);
   }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = dir;
-  }, [language, dir]);
 
   useEffect(() => {
     if (!hasMounted) return;
@@ -292,13 +284,6 @@ const Index = () => {
     document.documentElement.classList.toggle("theme-light", nextMode);
     try {
       localStorage.setItem(THEME_STORAGE_KEY, nextMode ? "light" : "dark");
-    } catch {}
-  };
-
-  const changeLanguage = (nextLanguage: SupportedLanguage) => {
-    setLanguage(nextLanguage);
-    try {
-      localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
     } catch {}
   };
 
@@ -609,7 +594,7 @@ const Index = () => {
             onClick={() => setIsSettingsOpen(false)}
           >
             <motion.section
-              dir={dir}
+              dir="rtl"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -672,30 +657,6 @@ const Index = () => {
                 <Link href="/about" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><Info size={18} /> من نحن</Link>
                 <Link href="/contact" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><MessageCircle size={18} /> تواصل معنا</Link>
                 <Link href="/privacy" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><ShieldCheck size={18} /> سياسة الخصوصية</Link>
-                <div className="mt-2 border-t border-white/10 pt-3">
-                  <div className="mb-2 flex items-center gap-2 px-3 text-sm font-bold text-white/65">
-                    <Globe2 size={18} />
-                    <span>{language === "ar" ? "اللغة" : "Langue"}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 px-3">
-                    <button
-                      type="button"
-                      onClick={() => changeLanguage("ar")}
-                      aria-pressed={language === "ar"}
-                      className={`rounded-lg px-2 py-2 text-xs font-bold transition-colors ${language === "ar" ? "bg-emerald-500/20 text-emerald-300" : "bg-white/5 text-white/55 hover:bg-white/10"}`}
-                    >
-                      العربية
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => changeLanguage("fr")}
-                      aria-pressed={language === "fr"}
-                      className={`rounded-lg px-2 py-2 text-xs font-bold transition-colors ${language === "fr" ? "bg-emerald-500/20 text-emerald-300" : "bg-white/5 text-white/55 hover:bg-white/10"}`}
-                    >
-                      Français
-                    </button>
-                  </div>
-                </div>
               </nav>
             </motion.section>
           </motion.div>
