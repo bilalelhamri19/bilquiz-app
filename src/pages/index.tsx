@@ -437,6 +437,9 @@ const Index = () => {
                 <WelcomeScreen
                   language={language}
                   onStartQuiz={() => setAppState("groupSelect")}
+                  coins={progress.coins}
+                  completedGroupsCount={Object.keys(progress.completedGroups).length}
+                  totalGroupsCount={totalGroups}
                 />
               </motion.div>
             )}
