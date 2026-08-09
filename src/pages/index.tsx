@@ -592,13 +592,6 @@ const Index = () => {
         {/* ── Footer ── */}
         <footer className="text-center px-4 py-5 text-sm border-t border-white/5">
           <div>BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال</div>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-white/35">
-            <Link href="/how-to-play" className="hover:text-emerald-300">كيف تلعب</Link>
-            <Link href="/faq" className="hover:text-emerald-300">الأسئلة الشائعة</Link>
-            <Link href="/about" className="hover:text-emerald-300">من نحن</Link>
-            <Link href="/contact" className="hover:text-emerald-300">تواصل معنا</Link>
-            <Link href="/privacy" className="hover:text-emerald-300">سياسة الخصوصية</Link>
-          </div>
         </footer>
       </div>
 
@@ -656,6 +649,14 @@ const Index = () => {
                 <p>خصك 6 أجوبة صحيحة من 10 باش تحل المجموعة التالية.</p>
                 <p>كل جواب صحيح كيعطيك 5 coins، والتلميح كيكلف 10 coins.</p>
               </div>
+
+              <nav aria-label="روابط BilQuiz" className="mt-4 flex flex-col gap-2 text-sm font-bold">
+                <Link href="/how-to-play" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">كيف تلعب</Link>
+                <Link href="/faq" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">الأسئلة الشائعة</Link>
+                <Link href="/about" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">من نحن</Link>
+                <Link href="/contact" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">تواصل معنا</Link>
+                <Link href="/privacy" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">سياسة الخصوصية</Link>
+              </nav>
             </motion.section>
           </motion.div>
         )}
