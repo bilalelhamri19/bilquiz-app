@@ -1,6 +1,5 @@
 import Head from "next/head";
-import Link from "next/link";
-import { Brain, Heart, Home, Sparkles } from "lucide-react";
+import { Brain, Heart, Sparkles } from "lucide-react";
 import SiteLayout from "@/components/SiteLayout";
 
 const AboutPage = () => (
@@ -12,7 +11,6 @@ const AboutPage = () => (
     <SiteLayout>
     <main className="flex-1 px-4 py-10 text-right text-white">
       <section className="glass mx-auto max-w-3xl rounded-3xl p-6 sm:p-10">
-        <Link href="/" className="inline-flex items-center gap-2 rounded-xl bg-emerald-400/10 px-3 py-2 text-sm font-bold text-emerald-300 transition-colors hover:bg-emerald-400/20 hover:text-emerald-200"><Home size={17} /> الرئيسية</Link>
         <div className="mt-7 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-violet-500"><Brain size={34} /></div>
           <h1 className="mt-4 text-3xl font-black sm:text-4xl">عن BilQuiz</h1>

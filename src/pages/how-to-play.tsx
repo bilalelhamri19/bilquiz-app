@@ -1,6 +1,5 @@
 import Head from "next/head";
-import Link from "next/link";
-import { CircleHelp, Home, Lightbulb, Target, Trophy } from "lucide-react";
+import { CircleHelp, Lightbulb, Target, Trophy } from "lucide-react";
 import SiteLayout from "@/components/SiteLayout";
 
 const steps = [
@@ -19,7 +18,6 @@ const HowToPlayPage = () => (
     <SiteLayout>
     <main className="flex-1 px-4 py-10 text-right text-white">
       <section className="mx-auto max-w-3xl">
-        <Link href="/" className="inline-flex items-center gap-2 rounded-xl bg-emerald-400/10 px-3 py-2 text-sm font-bold text-emerald-300 transition-colors hover:bg-emerald-400/20 hover:text-emerald-200"><Home size={17} /> الرئيسية</Link>
         <div className="mt-6 text-center">
           <span className="text-4xl">🎮</span>
           <h1 className="mt-3 text-3xl font-black sm:text-4xl">كيف تلعب BilQuiz؟</h1>
