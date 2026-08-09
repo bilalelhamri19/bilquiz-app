@@ -670,7 +670,7 @@ const Index = () => {
                   {isLightMode ? <Sun className="text-amber-400" /> : <Moon className="text-violet-300" />}
                   {isLightMode ? "الوضع النهاري" : "الوضع الليلي"}
                 </span>
-                <span className={`rounded-full px-3 py-1 text-xs font-bold ${isLightMode ? "bg-amber-400/15 text-amber-500" : "bg-violet-400/15 text-violet-300"}`}>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold ${isLightMode ? "bg-amber-400/35 text-amber-800" : "bg-violet-400/15 text-violet-300"}`}>
                   مفعّل
                 </span>
               </button>
