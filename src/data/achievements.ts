@@ -1,6 +1,3 @@
-import { Riddle, allRiddles } from "./riddles";
-import { ui } from "./i18n";
-
 export interface Achievement {
   id: string;
   icon: string;
@@ -173,5 +170,3 @@ export const DAILY_REWARDS = [
   { day: 6, coins: 100, label: "مكافأة اليوم السادس" },
   { day: 7, coins: 200, label: "مكافأة الأسبوع الكبير 🎁" },
 ];
-
-export { allRiddles, ui };
