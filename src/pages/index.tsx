@@ -594,6 +594,7 @@ const Index = () => {
           <div>BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال</div>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-white/35">
             <Link href="/how-to-play" className="hover:text-emerald-300">كيف تلعب</Link>
+            <Link href="/faq" className="hover:text-emerald-300">الأسئلة الشائعة</Link>
             <Link href="/about" className="hover:text-emerald-300">من نحن</Link>
             <Link href="/privacy" className="hover:text-emerald-300">سياسة الخصوصية</Link>
           </div>
