@@ -20,6 +20,7 @@ const QUESTIONS_PER_GROUP = 10;
 const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
 const THEME_STORAGE_KEY = "bilquiz_theme";
+const LANGUAGE_STORAGE_KEY = "bilquiz_language";
 const COINS_PER_CORRECT_ANSWER = 5;
 
 // Split riddles into groups of 10
