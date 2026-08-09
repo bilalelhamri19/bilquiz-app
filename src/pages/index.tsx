@@ -601,16 +601,16 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex justify-end bg-slate-950/70 backdrop-blur-sm"
             onClick={() => setIsSettingsOpen(false)}
           >
             <motion.section
               dir="rtl"
-              initial={{ opacity: 0, scale: 0.96, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
               transition={{ duration: 0.2 }}
-              className="glass w-full max-w-sm rounded-3xl border border-white/10 p-6 shadow-2xl"
+              className="glass h-full w-full max-w-sm overflow-y-auto rounded-l-3xl border border-white/10 p-6 shadow-2xl"
               role="dialog"
               aria-modal="true"
               aria-labelledby="settings-title"
