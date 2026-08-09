@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Settings, Share2, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import LoadingScreen from "@/components/LoadingScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import QuizCard from "@/components/QuizCard";
 import GroupSelect, { GroupInfo } from "@/components/GroupSelect";
@@ -137,7 +136,6 @@ const saveProgress = (p: Progress) => {
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("welcome");
-  const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -173,8 +171,6 @@ const Index = () => {
       setSoundEnabled(enabled);
     } catch {}
     setHasMounted(true);
-    const timer = window.setTimeout(() => setIsLoading(false), 1800);
-    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -389,8 +385,6 @@ const Index = () => {
   );
 
   // ── Render ──────────────────────────────────────────────────────────────
-  if (isLoading) return <LoadingScreen />;
-
   return (
     <div dir={dir} className="bg-app min-h-screen relative overflow-hidden">
       {/* Ambient orbs */}

@@ -1,7 +1,7 @@
 
 
 import { motion } from "framer-motion";
-import { Trophy } from "lucide-react";
+import Image from "next/image";
 import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 
@@ -27,12 +27,9 @@ const WelcomeScreen = ({ language, onStartQuiz }: WelcomeScreenProps) => {
           initial={{ scale: 0, rotate: -20 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-          className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl pulse-glow"
-          style={{
-            background: "linear-gradient(135deg, #10b981, #6366f1)",
-          }}
+          className="mx-auto mb-8 h-24 w-24 overflow-hidden rounded-3xl pulse-glow"
         >
-          <Trophy className="h-12 w-12 text-white" />
+          <Image src="/logo.jpeg" alt="BilQuiz" width={96} height={96} priority className="h-full w-full object-cover" />
         </motion.div>
 
         <h1 className="text-5xl sm:text-6xl font-black mb-2 leading-tight">
