@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Settings, Share2, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowRight, CircleHelp, Gamepad2, Info, MessageCircle, Settings, Share2, ShieldCheck, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import QuizCard from "@/components/QuizCard";
@@ -650,11 +650,11 @@ const Index = () => {
                 <button type="button" onClick={shareGame} className="flex items-center gap-2 rounded-xl px-3 py-2 text-right text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">
                   <Share2 size={18} /> مشاركة اللعبة
                 </button>
-                <Link href="/how-to-play" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">كيف تلعب</Link>
-                <Link href="/faq" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">الأسئلة الشائعة</Link>
-                <Link href="/about" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">من نحن</Link>
-                <Link href="/contact" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">تواصل معنا</Link>
-                <Link href="/privacy" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">سياسة الخصوصية</Link>
+                <Link href="/how-to-play" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><Gamepad2 size={18} /> كيف تلعب</Link>
+                <Link href="/faq" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><CircleHelp size={18} /> الأسئلة الشائعة</Link>
+                <Link href="/about" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><Info size={18} /> من نحن</Link>
+                <Link href="/contact" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><MessageCircle size={18} /> تواصل معنا</Link>
+                <Link href="/privacy" className="flex items-center gap-2 rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300"><ShieldCheck size={18} /> سياسة الخصوصية</Link>
               </nav>
             </motion.section>
           </motion.div>
