@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { Home } from "lucide-react";
+import SiteLayout from "@/components/SiteLayout";
 
 const PrivacyPage = () => (
   <>
@@ -9,7 +10,8 @@ const PrivacyPage = () => (
       <meta name="description" content="سياسة خصوصية تطبيق BilQuiz." />
     </Head>
 
-    <main dir="rtl" className="bg-app min-h-screen px-4 py-10 text-right text-white">
+    <SiteLayout>
+    <main className="flex-1 px-4 py-10 text-right text-white">
       <article className="glass mx-auto max-w-3xl rounded-3xl p-6 sm:p-10">
         <Link href="/" className="inline-flex items-center gap-2 rounded-xl bg-emerald-400/10 px-3 py-2 text-sm font-bold text-emerald-300 transition-colors hover:bg-emerald-400/20 hover:text-emerald-200"><Home size={17} /> الرئيسية</Link>
 
@@ -66,6 +68,7 @@ const PrivacyPage = () => (
         </section>
       </article>
     </main>
+    </SiteLayout>
   </>
 );
 

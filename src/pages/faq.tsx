@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { ChevronLeft, CircleHelp, Home } from "lucide-react";
+import SiteLayout from "@/components/SiteLayout";
 
 const questions = [
   {
@@ -35,7 +36,8 @@ const FaqPage = () => (
       <title>الأسئلة الشائعة | BilQuiz</title>
       <meta name="description" content="إجابات عن الأسئلة الشائعة حول لعبة BilQuiz." />
     </Head>
-    <main dir="rtl" className="bg-app min-h-screen px-4 py-10 text-right text-white">
+    <SiteLayout>
+    <main className="flex-1 px-4 py-10 text-right text-white">
       <section className="mx-auto max-w-3xl">
         <Link href="/" className="inline-flex items-center gap-2 rounded-xl bg-emerald-400/10 px-3 py-2 text-sm font-bold text-emerald-300 transition-colors hover:bg-emerald-400/20 hover:text-emerald-200"><Home size={17} /> الرئيسية</Link>
         <div className="mt-6 text-center">
@@ -56,6 +58,7 @@ const FaqPage = () => (
         </div>
       </section>
     </main>
+    </SiteLayout>
   </>
 );
 

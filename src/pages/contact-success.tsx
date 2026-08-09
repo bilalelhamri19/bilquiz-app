@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { CheckCircle2, Home, Send } from "lucide-react";
+import SiteLayout from "@/components/SiteLayout";
 
 const ContactSuccessPage = () => (
   <>
@@ -8,7 +9,8 @@ const ContactSuccessPage = () => (
       <title>تم إرسال الرسالة | BilQuiz</title>
       <meta name="robots" content="noindex" />
     </Head>
-    <main dir="rtl" className="bg-app flex min-h-screen items-center justify-center px-4 py-10 text-center text-white">
+    <SiteLayout>
+    <main className="flex flex-1 items-center justify-center px-4 py-10 text-center text-white">
       <section className="glass w-full max-w-md rounded-3xl p-8 sm:p-10">
         <CheckCircle2 className="mx-auto text-emerald-400" size={64} />
         <h1 className="mt-5 text-3xl font-black">تم إرسال رسالتك بنجاح</h1>
@@ -19,6 +21,7 @@ const ContactSuccessPage = () => (
         </div>
       </section>
     </main>
+    </SiteLayout>
   </>
 );
 

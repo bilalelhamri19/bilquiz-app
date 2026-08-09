@@ -1,8 +1,10 @@
 import Link from "next/link";
+import SiteLayout from "@/components/SiteLayout";
 
 const Custom404 = () => {
   return (
-    <div dir="rtl" className="min-h-screen bg-app flex items-center justify-center">
+    <SiteLayout>
+    <main className="flex flex-1 items-center justify-center px-4 py-10 text-right text-white">
       <div className="text-center">
         <h1 className="text-6xl font-black mb-4 gradient-text">404</h1>
         <p className="text-xl text-white/60 mb-6">الصفحة غير موجودة</p>
@@ -13,7 +15,8 @@ const Custom404 = () => {
           العودة للرئيسية
         </Link>
       </div>
-    </div>
+    </main>
+    </SiteLayout>
   );
 };
 
