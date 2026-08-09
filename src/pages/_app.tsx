@@ -12,6 +12,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:title" content="BilQuiz - العب وتحدى أصدقاءك" />
         <meta property="og:description" content="تطبيق ألغاز ممتع لتتحدى أصدقاءك وتختبر ذكاءك مع BilQuiz!" />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://bilquiz1.com" />
+        <meta property="og:image" content="https://bilquiz1.com/logo.jpeg" />
+        <link rel="canonical" href="https://bilquiz1.com" />
         <meta name="theme-color" content="#10b981" />
         <script
           async

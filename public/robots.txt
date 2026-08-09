@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://bilquiz1.vercel.app/sitemap.xml
+Sitemap: https://bilquiz1.com/sitemap.xml

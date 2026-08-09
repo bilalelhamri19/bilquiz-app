@@ -1,3 +1,11 @@
 {
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.bilquiz1.com" }],
+      "destination": "https://bilquiz1.com/$1",
+      "permanent": true
+    }
+  ]
 }
