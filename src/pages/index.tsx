@@ -646,12 +646,6 @@ const Index = () => {
                 </span>
               </button>
 
-              <div className="mt-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-sm text-white/50 leading-relaxed">
-                <p className="font-bold text-white/70 mb-2">قواعد اللعب</p>
-                <p>خصك 6 أجوبة صحيحة من 10 باش تحل المجموعة التالية.</p>
-                <p>كل جواب صحيح كيعطيك 5 coins، والتلميح كيكلف 10 coins.</p>
-              </div>
-
               <nav aria-label="روابط BilQuiz" className="mt-4 flex flex-col gap-2 text-sm font-bold">
                 <button type="button" onClick={shareGame} className="flex items-center gap-2 rounded-xl px-3 py-2 text-right text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">
                   <Share2 size={18} /> مشاركة اللعبة

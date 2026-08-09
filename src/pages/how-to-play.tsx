@@ -35,7 +35,11 @@ const HowToPlayPage = () => (
             </article>
           ))}
         </div>
-        <div className="glass mt-8 rounded-2xl p-5 text-center text-white/70">في BilQuiz أكثر من 700 سؤال وألغاز متنوعة. كلما لعبت أكثر، فتحت مجموعات جديدة.</div>
+        <section className="glass mt-8 rounded-2xl p-5 text-white/70">
+          <h2 className="font-black text-white">قواعد اللعب</h2>
+          <p className="mt-3 leading-7">خصك 6 أجوبة صحيحة من 10 باش تحل المجموعة التالية.</p>
+          <p className="mt-2 leading-7">كل جواب صحيح كيعطيك 5 coins، والتلميح كيكلف 10 coins.</p>
+        </section>
       </section>
     </main>
   </>
