@@ -20,7 +20,7 @@ const ContactPage = () => (
         <form action="https://formsubmit.co/bilalelhamri2006@gmail.com" method="POST" className="mt-8 space-y-4">
           <input type="hidden" name="_subject" value="رسالة جديدة من BilQuiz" />
           <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value="https://bilquiz1.vercel.app/contact-success" />
+          <input type="hidden" name="_next" value="https://bilquiz1.com/contact-success" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
 

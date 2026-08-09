@@ -20,10 +20,11 @@ export const SiteFooter = () => (
         </div>
       </div>
       <nav aria-label="روابط BilQuiz" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-bold text-white/55">
+        <Link href="/blog" className="transition-colors hover:text-emerald-300">المدونة</Link>
         <Link href="/about" className="transition-colors hover:text-emerald-300">من نحن</Link>
         <Link href="/contact" className="transition-colors hover:text-emerald-300">تواصل معنا</Link>
         <Link href="/privacy" className="transition-colors hover:text-emerald-300">سياسة الخصوصية</Link>
-        <span className="text-white/25">© 2024</span>
+        <span className="text-white/25">© 2026</span>
       </nav>
     </div>
   </footer>
