@@ -131,7 +131,7 @@ const StatsModal = ({ open, stats, onClose }: StatsModalProps) => {
                   <span className="text-xs text-white/40 font-black">{progressPct}%</span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400" style={{ width: `${progressPct}%`} />
+                  <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400" style={{ width: `${progressPct}%` }} />
                 </div>
                 <div className="mt-2 text-sm text-white/60">
                   <span className="font-black text-white">{stats.riddlesSolved}</span> / {stats.totalRiddles} لغز
@@ -146,7 +146,7 @@ const StatsModal = ({ open, stats, onClose }: StatsModalProps) => {
                   <span className="text-xs text-white/40 font-black">{groupPct}%</span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-400" style={{ width: `${groupPct}%`}} />
+                  <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-400" style={{ width: `${groupPct}%` }} />
                 </div>
                 <div className="mt-2 text-sm text-white/60">
                   <span className="font-black text-white">{stats.groupsUnlocked}</span> / {stats.totalGroups} مجموعة

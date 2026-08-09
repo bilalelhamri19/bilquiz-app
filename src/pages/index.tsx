@@ -430,13 +430,13 @@ const Index = () => {
   }));
 
   // ── Achievement unlocker ───────────────────────────────────────────────
-  const showAchievement = (ach: Achievement) => {
+  const showAchievement = useCallback((ach: Achievement) => {
     setAchievementToast(ach);
     setIsAchievementToastOpen(true);
     window.setTimeout(() => setIsAchievementToastOpen(false), 4200);
-  };
+  }, []);
 
-  const checkAndUnlockAchievements = (updatedProgress: Progress): Progress => {
+  const checkAndUnlockAchievements = useCallback((updatedProgress: Progress): Progress => {
     const unlocked = new Set(updatedProgress.unlockedAchievements);
     const newAchievements = getNewAchievements(updatedProgress, unlocked);
     if (newAchievements.length === 0) return updatedProgress;
@@ -448,7 +448,7 @@ const Index = () => {
       }
     }
     return { ...updatedProgress, unlockedAchievements: allUnlocked };
-  };
+  }, [showAchievement]);
 
   // ── Daily reward claimer ───────────────────────────────────────────────
   const claimDailyReward = (coins: number, day: number) => {
@@ -662,7 +662,7 @@ const Index = () => {
       setGroupScore(score);
       setAppState("groupResult");
     },
-    [currentGroupIndex, totalGroups, isSoundOn]
+    [currentGroupIndex, totalGroups, isSoundOn, checkAndUnlockAchievements]
   );
 
   const progressPercent = Math.round(
