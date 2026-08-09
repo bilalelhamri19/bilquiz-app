@@ -587,11 +587,12 @@ const Index = () => {
                 <p className="mt-0.5 text-xs text-white/40">ألغاز وأسئلة لتختبر ذكاءك</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-xs font-bold text-white/55" dir="rtl">
-              <span className="rounded-full bg-emerald-400/10 px-3 py-1.5 text-emerald-300">{totalGroups} مجموعة</span>
-              <span className="rounded-full bg-white/5 px-3 py-1.5">{riddles.length} سؤال</span>
+            <nav aria-label="روابط BilQuiz" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-bold text-white/55" dir="rtl">
+              <Link href="/about" className="transition-colors hover:text-emerald-300">من نحن</Link>
+              <Link href="/contact" className="transition-colors hover:text-emerald-300">تواصل معنا</Link>
+              <Link href="/privacy" className="transition-colors hover:text-emerald-300">سياسة الخصوصية</Link>
               <span className="text-white/25">© 2024</span>
-            </div>
+            </nav>
           </div>
         </footer>
       </div>
