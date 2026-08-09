@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CircleHelp, Gamepad2, Info, MessageCircle, Settings, Share2, ShieldCheck, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowRight, CircleHelp, Gamepad2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import QuizCard from "@/components/QuizCard";
@@ -19,6 +19,7 @@ const QUESTIONS_PER_GROUP = 10;
 const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
 const SOUND_STORAGE_KEY = "bilquiz_sound_enabled";
+const THEME_STORAGE_KEY = "bilquiz_theme";
 const COINS_PER_CORRECT_ANSWER = 5;
 
 // Split riddles into groups of 8
@@ -140,6 +141,7 @@ const Index = () => {
   const [hasMounted, setHasMounted] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [soundEnabled, setSoundEnabledState] = useState(true);
+  const [isLightMode, setIsLightMode] = useState(false);
 
   // Current session
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
@@ -169,6 +171,9 @@ const Index = () => {
       const enabled = savedSoundSetting !== "false";
       setSoundEnabledState(enabled);
       setSoundEnabled(enabled);
+      const lightMode = localStorage.getItem(THEME_STORAGE_KEY) === "light";
+      setIsLightMode(lightMode);
+      document.documentElement.classList.toggle("theme-light", lightMode);
     } catch {}
     setHasMounted(true);
   }, []);
@@ -269,6 +274,15 @@ const Index = () => {
     if (nextValue) startBackgroundMusic();
     try {
       localStorage.setItem(SOUND_STORAGE_KEY, String(nextValue));
+    } catch {}
+  };
+
+  const toggleTheme = () => {
+    const nextMode = !isLightMode;
+    setIsLightMode(nextMode);
+    document.documentElement.classList.toggle("theme-light", nextMode);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, nextMode ? "light" : "dark");
     } catch {}
   };
 
@@ -643,6 +657,21 @@ const Index = () => {
                 </span>
                 <span className={`rounded-full px-3 py-1 text-xs font-bold ${soundEnabled ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"}`}>
                   {soundEnabled ? "مفعلة" : "متوقفة"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleTheme}
+                aria-pressed={isLightMode}
+                className="mt-3 w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-right hover:bg-white/10"
+              >
+                <span className="flex items-center gap-3 text-white font-bold">
+                  {isLightMode ? <Sun className="text-amber-400" /> : <Moon className="text-violet-300" />}
+                  {isLightMode ? "الوضع النهاري" : "الوضع الليلي"}
+                </span>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold ${isLightMode ? "bg-amber-400/15 text-amber-500" : "bg-violet-400/15 text-violet-300"}`}>
+                  مفعّل
                 </span>
               </button>
 
