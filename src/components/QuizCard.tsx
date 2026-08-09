@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Riddle, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
-import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins } from "lucide-react";
+import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins, ArrowRight } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { playCorrect, playWrong } from "@/lib/audio";
 
@@ -13,6 +13,7 @@ interface QuizCardProps {
   onSpendCoins: (amount: number) => void;
   onCorrectAnswer: () => void;
   onSkip: () => void;
+  onBackToGroups: () => void;
   onAnswerPendingChange: (isPending: boolean) => void;
 }
 
@@ -39,7 +40,7 @@ const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "�
 const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 const NUMERIC_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip, onAnswerPendingChange }: QuizCardProps) => {
+const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip, onBackToGroups, onAnswerPendingChange }: QuizCardProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const correctAnswerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -317,14 +318,24 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
 
           {/* Footer */}
           <div className="px-6 pb-6 flex justify-between items-center border-t border-white/5 pt-4">
-            <button
-              onClick={onSkip}
-              disabled={isCorrect === true}
-              className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm"
-            >
-              <SkipForward size={14} />
-              {t.skip}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onBackToGroups}
+                className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm"
+              >
+                <ArrowRight size={14} />
+                <span>رجوع</span>
+              </button>
+              <button
+                onClick={onSkip}
+                disabled={isCorrect === true}
+                className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm"
+              >
+                <SkipForward size={14} />
+                {t.skip}
+              </button>
+            </div>
 
             <button
               type="button"

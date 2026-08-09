@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CircleHelp, Gamepad2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, Volume2, VolumeX, X } from "lucide-react";
+import { CircleHelp, Gamepad2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, Volume2, VolumeX, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import QuizCard from "@/components/QuizCard";
@@ -443,17 +443,6 @@ const Index = () => {
           )}
 
           <div className="flex items-center gap-2">
-            {appState !== "welcome" && (
-              <button
-                type="button"
-                onClick={() => setAppState("groupSelect")}
-                aria-label="الرجوع إلى المجموعات"
-                title="الرجوع إلى المجموعات"
-                className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-              >
-                <ArrowRight size={20} />
-              </button>
-            )}
             <button
               type="button"
               onClick={() => {
@@ -563,6 +552,7 @@ const Index = () => {
                   onSpendCoins={spendCoins}
                   onCorrectAnswer={() => handleCorrectAnswer(questionInGroup)}
                   onSkip={() => handleSkip(questionInGroup)}
+                  onBackToGroups={() => setAppState("groupSelect")}
                   onAnswerPendingChange={setIsQuestionTransitioning}
                 />
               </motion.div>
