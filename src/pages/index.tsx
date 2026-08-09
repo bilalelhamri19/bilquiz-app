@@ -447,14 +447,6 @@ const Index = () => {
             )}
             <button
               type="button"
-              onClick={shareGame}
-              aria-label="مشاركة اللعبة"
-              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-            >
-              <Share2 size={19} />
-            </button>
-            <button
-              type="button"
               onClick={() => {
                 startBackgroundMusic();
                 setIsSettingsOpen(true);
@@ -651,6 +643,9 @@ const Index = () => {
               </div>
 
               <nav aria-label="روابط BilQuiz" className="mt-4 flex flex-col gap-2 text-sm font-bold">
+                <button type="button" onClick={shareGame} className="flex items-center gap-2 rounded-xl px-3 py-2 text-right text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">
+                  <Share2 size={18} /> مشاركة اللعبة
+                </button>
                 <Link href="/how-to-play" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">كيف تلعب</Link>
                 <Link href="/faq" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">الأسئلة الشائعة</Link>
                 <Link href="/about" className="rounded-xl px-3 py-2 text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">من نحن</Link>
