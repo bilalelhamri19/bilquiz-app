@@ -576,8 +576,23 @@ const Index = () => {
         </main>
 
         {/* ── Footer ── */}
-        <footer className="text-center px-4 py-5 text-sm border-t border-white/5">
-          <div>BilQuiz © 2024 — {totalGroups} مجموعة • {riddles.length} سؤال</div>
+        <footer className="border-t border-white/5 px-4 py-5 sm:px-6">
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-center sm:flex-row sm:text-right">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 overflow-hidden rounded-xl border border-emerald-400/20">
+                <Image src="/logo.jpeg" alt="BilQuiz" width={40} height={40} className="h-full w-full object-cover" />
+              </div>
+              <div>
+                <p dir="ltr" className="font-black tracking-wide text-white">BilQuiz</p>
+                <p className="mt-0.5 text-xs text-white/40">ألغاز وأسئلة لتختبر ذكاءك</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-bold text-white/55" dir="rtl">
+              <span className="rounded-full bg-emerald-400/10 px-3 py-1.5 text-emerald-300">{totalGroups} مجموعة</span>
+              <span className="rounded-full bg-white/5 px-3 py-1.5">{riddles.length} سؤال</span>
+              <span className="text-white/25">© 2024</span>
+            </div>
+          </div>
         </footer>
       </div>
 
