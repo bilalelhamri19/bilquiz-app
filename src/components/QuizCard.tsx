@@ -52,7 +52,8 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
 
   // Letter grid state
   const [pool, setPool] = useState<string[]>([]);
-  const [selected, setSelected] = useState<{ char: string; poolIndex: number }[]>([]);
+  type SelectedLetter = { char: string; poolIndex: number };
+  const [selected, setSelected] = useState<(SelectedLetter | null)[]>([]);
 
   // Split answer into words and map them to flat slot indices
   const words = primaryAnswer.split(/\s+/);
@@ -65,10 +66,11 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     });
   });
   const totalSlots = flatIndexCounter;
+  const filledSlots = selected.filter((item): item is SelectedLetter => item !== null);
 
   // Initialize pool of letters
   useEffect(() => {
-    setSelected([]);
+    setSelected(Array(totalSlots).fill(null));
     setIsCorrect(null);
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
@@ -99,7 +101,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     }
 
     setPool(combined);
-  }, [riddle.id, language, primaryAnswer]);
+  }, [riddle.id, language, primaryAnswer, totalSlots]);
 
   useEffect(() => {
     return () => {
@@ -108,8 +110,8 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     };
   }, [onAnswerPendingChange]);
 
-  const checkAnswer = (currentSelection: { char: string; poolIndex: number }[]) => {
-    const answerString = currentSelection.map((s) => s.char).join("");
+  const checkAnswer = (currentSelection: (SelectedLetter | null)[]) => {
+    const answerString = currentSelection.map((s) => s?.char ?? "").join("");
     const answers = content.answers;
     const isAnswerCorrect = answers.some(
       (a) => normalizeForCompare(a) === normalizeForCompare(answerString)
@@ -123,7 +125,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
       onAnswerPendingChange(true);
       correctAnswerTimer.current = setTimeout(() => {
         onAnswerPendingChange(false);
-        setSelected([]);
+        setSelected(Array(totalSlots).fill(null));
         setIsCorrect(null);
         onCorrectAnswer();
       }, 3200);
@@ -134,11 +136,13 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
   };
 
   const handleSelectLetter = (char: string, poolIndex: number) => {
-    if (selected.length >= totalSlots) return;
-    const newSelected = [...selected, { char, poolIndex }];
+    const nextEmptySlot = selected.findIndex((item) => item === null);
+    if (nextEmptySlot === -1) return;
+    const newSelected = [...selected];
+    newSelected[nextEmptySlot] = { char, poolIndex };
     setSelected(newSelected);
 
-    if (newSelected.length === totalSlots) {
+    if (newSelected.every((item) => item !== null)) {
       checkAnswer(newSelected);
     } else {
       setIsCorrect(null);
@@ -146,40 +150,45 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
   };
 
   const handleRemoveSlot = (slotIndex: number) => {
-    if (slotIndex >= selected.length) return;
+    if (!selected[slotIndex]) return;
     const newSelected = [...selected];
-    newSelected.splice(slotIndex, 1);
+    newSelected[slotIndex] = null;
     setSelected(newSelected);
     setIsCorrect(null);
   };
 
   const handleBackspace = () => {
-    if (selected.length === 0) return;
-    setSelected(selected.slice(0, -1));
+    const lastFilledSlot = selected.reduce((last, item, index) => item ? index : last, -1);
+    if (lastFilledSlot === -1) return;
+    const newSelected = [...selected];
+    newSelected[lastFilledSlot] = null;
+    setSelected(newSelected);
     setIsCorrect(null);
   };
 
   const handleClear = () => {
-    setSelected([]);
+    setSelected(Array(totalSlots).fill(null));
     setIsCorrect(null);
   };
 
   const buyHint = () => {
-    if (coins < HINT_COST || selected.length >= totalSlots) return;
+    const nextEmptySlot = selected.findIndex((item) => item === null);
+    if (coins < HINT_COST || nextEmptySlot === -1) return;
 
     const answerLetters = Array.from(primaryAnswer.replace(/\s+/g, ""));
-    const nextLetter = answerLetters[selected.length];
+    const nextLetter = answerLetters[nextEmptySlot];
     const poolIndex = pool.findIndex(
-      (char, index) => char === nextLetter && !selected.some((item) => item.poolIndex === index)
+      (char, index) => char === nextLetter && !selected.some((item) => item?.poolIndex === index)
     );
     if (poolIndex === -1) return;
 
-    const newSelected = [...selected, { char: nextLetter, poolIndex }];
+    const newSelected = [...selected];
+    newSelected[nextEmptySlot] = { char: nextLetter, poolIndex };
     setSelected(newSelected);
     setIsCorrect(null);
     onSpendCoins(HINT_COST);
 
-    if (newSelected.length === totalSlots) {
+    if (newSelected.every((item) => item !== null)) {
       checkAnswer(newSelected);
     }
   };
@@ -272,7 +281,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
               <button
                 type="button"
                 onClick={handleBackspace}
-                disabled={selected.length === 0 || isCorrect === true}
+                disabled={filledSlots.length === 0 || isCorrect === true}
                 className="btn-ghost-dark flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold disabled:opacity-30 disabled:pointer-events-none"
               >
                 <Delete size={16} />
@@ -281,7 +290,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
               <button
                 type="button"
                 onClick={handleClear}
-                disabled={selected.length === 0 || isCorrect === true}
+                disabled={filledSlots.length === 0 || isCorrect === true}
                 className="btn-ghost-dark flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-red-400 border-red-500/20 bg-red-500/5 hover:bg-red-500/10 disabled:opacity-30 disabled:pointer-events-none"
               >
                 <Trash2 size={16} />
@@ -293,7 +302,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
             <div className="glass rounded-2xl p-4 border border-white/5">
               <div className={`grid ${getGridColsClass(pool.length)} gap-2 justify-items-center`}>
                 {pool.map((char, index) => {
-                  const isUsed = selected.some((s) => s.poolIndex === index);
+                  const isUsed = selected.some((s) => s?.poolIndex === index);
                   return (
                     <button
                       key={index}
@@ -340,7 +349,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
             <button
               type="button"
               onClick={buyHint}
-              disabled={coins < HINT_COST || selected.length >= totalSlots || isCorrect === true}
+              disabled={coins < HINT_COST || filledSlots.length >= totalSlots || isCorrect === true}
               className="btn-ghost-dark flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-amber-400 border-amber-500/20 disabled:opacity-30 disabled:pointer-events-none"
             >
               <HelpCircle size={14} />
