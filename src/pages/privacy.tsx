@@ -59,17 +59,9 @@ const PrivacyPage = () => (
           <div>
             <h2 className="text-xl font-black text-white">التغييرات والتواصل</h2>
             <p>
-              قد نحدّث هذه السياسة عند تغيير وظائف التطبيق. للاستفسارات أو طلب حذف بيانات التقدم المحلية، استعمل صفحة التواصل أو افتح طلباً عبر صفحة مشروع BilQuiz على GitHub. يمكنك أيضاً حذف بيانات التطبيق من إعدادات جهازك أو من بيانات المتصفح.
+              قد نحدّث هذه السياسة عند تغيير وظائف التطبيق. للاستفسارات أو طلب حذف بيانات التقدم المحلية، استعمل صفحة التواصل. يمكنك أيضاً حذف بيانات التطبيق من إعدادات جهازك أو من بيانات المتصفح.
             </p>
-            <Link href="/contact" className="mt-3 inline-block font-bold text-emerald-300 underline underline-offset-4 hover:text-emerald-200">صفحة التواصل</Link>
-            <a
-              className="font-bold text-emerald-300 underline underline-offset-4 hover:text-emerald-200"
-              href="https://github.com/bilalelhamri19/bilquiz-app/issues"
-              target="_blank"
-              rel="noreferrer"
-            >
-              التواصل عبر GitHub
-            </a>
+            <Link href="/contact" className="mt-3 inline-block font-bold text-emerald-300 underline underline-offset-4 hover:text-emerald-200">تواصل معنا</Link>
           </div>
         </section>
       </article>
