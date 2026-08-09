@@ -53,9 +53,9 @@ const StatCard = ({
 
 const StatsModal = ({ open, stats, onClose }: StatsModalProps) => {
   const progressPct =
-    stats.totalRiddles > 0 ? Math.round((stats.riddlesSolved / stats.totalRiddles * 100) : 0;
+    stats.totalRiddles > 0 ? Math.round((stats.riddlesSolved / stats.totalRiddles) * 100) : 0;
   const groupPct =
-    stats.totalGroups > 0 ? Math.round((stats.groupsUnlocked / stats.totalGroups * 100) : 0;
+    stats.totalGroups > 0 ? Math.round((stats.groupsUnlocked / stats.totalGroups) * 100) : 0;
 
   return (
     <AnimatePresence>

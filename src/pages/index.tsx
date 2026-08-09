@@ -259,8 +259,18 @@ const getNewAchievements = (
   const result: Achievement[] = [];
   for (const ach of ACHIEVEMENTS) {
     if (alreadyUnlocked.has(ach.id)) continue;
-    const v = stats[ach.type as keyof typeof stats];
-    if (typeof v === "number" && v >= ach.goal) result.push(ach);
+    let v: number;
+    switch (ach.type) {
+      case "riddles_solved": v = stats.riddlesSolved; break;
+      case "perfect_groups": v = stats.perfectGroups; break;
+      case "groups_unlocked": v = stats.groupsUnlocked; break;
+      case "coins_earned": v = stats.coinsEarned; break;
+      case "streak": v = stats.streak; break;
+      case "hints_used": v = stats.hintsUsed; break;
+      case "total_stars": v = stats.totalStars; break;
+      default: v = 0;
+    }
+    if (v >= ach.goal) result.push(ach);
   }
   return result;
 };
