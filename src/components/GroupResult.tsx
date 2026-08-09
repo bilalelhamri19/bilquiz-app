@@ -4,7 +4,7 @@ import { Star, RotateCcw, ChevronLeft, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import { getStars } from "@/lib/scoring";
-import { playWin } from "@/lib/audio";
+
 
 interface GroupResultProps {
   groupIndex: number;
@@ -36,7 +36,7 @@ const GroupResult = ({
   const stars = getStars(score, total);
 
   useEffect(() => {
-    playWin();
+
     if (stars >= 2) {
       confetti({
         particleCount: 120,

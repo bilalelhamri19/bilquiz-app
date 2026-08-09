@@ -4,7 +4,7 @@ import { Riddle, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins, ArrowRight } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { playCorrect, playWrong } from "@/lib/audio";
+
 
 interface QuizCardProps {
   riddle: Riddle;
@@ -120,7 +120,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     setIsCorrect(isAnswerCorrect);
 
     if (isAnswerCorrect) {
-      playCorrect();
+
       toast({ title: t.correct, description: t.correctDesc, variant: "default" });
       onAnswerPendingChange(true);
       correctAnswerTimer.current = setTimeout(() => {
@@ -130,7 +130,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
         onCorrectAnswer();
       }, 3200);
     } else {
-      playWrong();
+
       toast({ title: t.wrong, description: t.wrongDesc, variant: "destructive" });
     }
   };

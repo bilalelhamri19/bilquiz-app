@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { CircleHelp, Gamepad2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, Volume2, VolumeX, X } from "lucide-react";
+import { CircleHelp, Gamepad2, Info, MessageCircle, Moon, Settings, Share2, ShieldCheck, Sun, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import QuizCard from "@/components/QuizCard";
@@ -13,13 +13,12 @@ import { riddles, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
-import { setSoundEnabled, startBackgroundMusic, stopBackgroundMusic } from "@/lib/audio";
+
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 10;
 const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
-const SOUND_STORAGE_KEY = "bilquiz_sound_enabled";
 const THEME_STORAGE_KEY = "bilquiz_theme";
 const COINS_PER_CORRECT_ANSWER = 5;
 
@@ -141,7 +140,6 @@ const Index = () => {
   const [progress, setProgress] = useState<Progress>({ unlockedGroups: [0], completedGroups: {}, inProgressGroups: {}, coins: 0, lastGroupIndex: 0 });
   const [hasMounted, setHasMounted] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [soundEnabled, setSoundEnabledState] = useState(true);
   const [isLightMode, setIsLightMode] = useState(false);
 
   // Current session
@@ -168,27 +166,11 @@ const Index = () => {
   useEffect(() => {
     setProgress(loadProgress());
     try {
-      const savedSoundSetting = localStorage.getItem(SOUND_STORAGE_KEY);
-      const enabled = savedSoundSetting !== "false";
-      setSoundEnabledState(enabled);
-      setSoundEnabled(enabled);
       const lightMode = localStorage.getItem(THEME_STORAGE_KEY) === "light";
       setIsLightMode(lightMode);
       document.documentElement.classList.toggle("theme-light", lightMode);
     } catch {}
     setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasMounted) return;
-
-    if (!soundEnabled) {
-      stopBackgroundMusic();
-    }
-  }, [hasMounted, soundEnabled]);
-
-  useEffect(() => {
-    return stopBackgroundMusic;
   }, []);
 
   // Build GroupInfo array for the selector
@@ -216,8 +198,6 @@ const Index = () => {
     setResolvedQuestions(resolvedQuestionIndexes);
     setIsQuestionTransitioning(false);
     setProgress((current) => ({ ...current, lastGroupIndex: groupIndex }));
-    // Start audio directly from the player's click so browsers allow playback.
-    startBackgroundMusic();
     setAppState("quiz");
   };
 
@@ -268,15 +248,7 @@ const Index = () => {
     }));
   };
 
-  const toggleSound = () => {
-    const nextValue = !soundEnabled;
-    setSoundEnabledState(nextValue);
-    setSoundEnabled(nextValue);
-    if (nextValue) startBackgroundMusic();
-    try {
-      localStorage.setItem(SOUND_STORAGE_KEY, String(nextValue));
-    } catch {}
-  };
+
 
   const toggleTheme = () => {
     const nextMode = !isLightMode;
@@ -445,10 +417,7 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => {
-                startBackgroundMusic();
-                setIsSettingsOpen(true);
-              }}
+              onClick={() => setIsSettingsOpen(true)}
               aria-label="الإعدادات"
               className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
             >
@@ -467,10 +436,7 @@ const Index = () => {
                 className="w-full">
                 <WelcomeScreen
                   language={language}
-                  onStartQuiz={() => {
-                    startBackgroundMusic();
-                    setAppState("groupSelect");
-                  }}
+                  onStartQuiz={() => setAppState("groupSelect")}
                 />
               </motion.div>
             )}
@@ -619,19 +585,7 @@ const Index = () => {
                 </h2>
               </div>
 
-              <button
-                type="button"
-                onClick={toggleSound}
-                className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-right hover:bg-white/10"
-              >
-                <span className="flex items-center gap-3 text-white font-bold">
-                  {soundEnabled ? <Volume2 className="text-emerald-400" /> : <VolumeX className="text-white/40" />}
-                  أصوات اللعبة
-                </span>
-                <span className={`rounded-full px-3 py-1 text-xs font-bold ${soundEnabled ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/40"}`}>
-                  {soundEnabled ? "مفعلة" : "متوقفة"}
-                </span>
-              </button>
+
 
               <button
                 type="button"
