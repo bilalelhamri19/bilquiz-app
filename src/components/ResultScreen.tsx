@@ -4,19 +4,17 @@ import { motion } from "framer-motion";
 import { CheckCircle, RotateCcw, Trophy, Star } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
-import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 
 interface ResultScreenProps {
   score: number;
   totalQuestions: number;
-  language: Language;
   onRestart: () => void;
 }
 
-const ResultScreen = ({ score, totalQuestions, language, onRestart }: ResultScreenProps) => {
+const ResultScreen = ({ score, totalQuestions, onRestart }: ResultScreenProps) => {
   const percentage = (score / totalQuestions) * 100;
-  const t = ui[language];
+  const t = ui.ar;
 
   useEffect(() => {
     if (percentage >= 70) {

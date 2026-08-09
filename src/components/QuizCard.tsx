@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Riddle, Language } from "@/data/riddles";
+import { Riddle } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins, ArrowRight } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -8,7 +8,6 @@ import { toast } from "@/components/ui/use-toast";
 
 interface QuizCardProps {
   riddle: Riddle;
-  language: Language;
   coins: number;
   onSpendCoins: (amount: number) => void;
   onCorrectAnswer: () => void;
@@ -37,16 +36,15 @@ const normalizeForCompare = (value: string) =>
 const isNumeric = (value: string) => /^\d+$/.test(value);
 
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
-const LATIN_LETTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 const NUMERIC_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSkip, onBackToGroups, onAnswerPendingChange }: QuizCardProps) => {
+const QuizCard = ({ riddle, coins, onSpendCoins, onCorrectAnswer, onSkip, onBackToGroups, onAnswerPendingChange }: QuizCardProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const correctAnswerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const t = ui[language];
-  const content = riddle.translations[language];
-  const dir = language === "ar" ? "rtl" : "ltr";
+  const t = ui.ar;
+  const content = riddle.translations.ar;
+  const dir = "rtl";
   const primaryAnswer = content.answers[0];
   const explanation = `الجواب الصحيح هو «${primaryAnswer}». ${content.hint}`;
 
@@ -77,9 +75,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     const answerChars = Array.from(cleanAnswer);
     const alphabet = isNumeric(primaryAnswer)
       ? NUMERIC_DIGITS
-      : language === "ar"
-      ? ARABIC_LETTERS
-      : LATIN_LETTERS;
+      : ARABIC_LETTERS;
 
     // Calculate balanced grid size (even number, minimum 12, at least 4 distractors)
     let targetSize = answerChars.length + 4;
@@ -101,7 +97,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
     }
 
     setPool(combined);
-  }, [riddle.id, language, primaryAnswer, totalSlots]);
+  }, [riddle.id, primaryAnswer, totalSlots]);
 
   useEffect(() => {
     return () => {
@@ -202,7 +198,7 @@ const QuizCard = ({ riddle, language, coins, onSpendCoins, onCorrectAnswer, onSk
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={`${riddle.id}-${language}`}
+        key={riddle.id}
         dir={dir}
         initial={{ opacity: 0, x: 60, scale: 0.95 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}

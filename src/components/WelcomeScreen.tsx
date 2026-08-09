@@ -1,11 +1,9 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Trophy, Coins, CheckCircle, Award } from "lucide-react";
 
 interface WelcomeScreenProps {
-  language: Language;
   onStartQuiz: () => void;
   coins: number;
   completedGroupsCount: number;
@@ -13,13 +11,12 @@ interface WelcomeScreenProps {
 }
 
 const WelcomeScreen = ({
-  language,
   onStartQuiz,
   coins,
   completedGroupsCount,
   totalGroupsCount,
 }: WelcomeScreenProps) => {
-  const t = ui[language];
+  const t = ui.ar;
 
   // Determine user rank based on completed groups
   const getUserRank = () => {

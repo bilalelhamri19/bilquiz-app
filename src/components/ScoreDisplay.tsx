@@ -1,15 +1,13 @@
 
 import { motion } from "framer-motion";
-import { Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 
 interface ScoreDisplayProps {
   score: number;
   total: number;
-  language: Language;
 }
 
-const ScoreDisplay = ({ score, total, language }: ScoreDisplayProps) => {
+const ScoreDisplay = ({ score, total }: ScoreDisplayProps) => {
   const percentage = (score / total) * 100;
   const radius = 28;
   const strokeWidth = 6;
@@ -57,7 +55,7 @@ const ScoreDisplay = ({ score, total, language }: ScoreDisplayProps) => {
           </text>
         </svg>
       </div>
-      <div className="text-white/50 text-sm">{ui[language].outOf(score, total)}</div>
+      <div className="text-white/50 text-sm">{ui.ar.outOf(score, total)}</div>
     </motion.div>
   );
 };
