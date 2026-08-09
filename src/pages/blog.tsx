@@ -17,7 +17,7 @@ export default function Blog() {
         <link rel="canonical" href="https://bilquiz1.com/blog" />
       </Head>
 
-      <SiteLayout>
+      <SiteLayout pageTitle="بيلكويز - المدونة">
         <main className="flex-1 px-4 py-10 text-right">
           <AnimatePresence mode="wait">
             {!activeArticle ? (
