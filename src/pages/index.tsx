@@ -599,7 +599,7 @@ const Index = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.2 }}
-              className="glass h-full w-full max-w-sm overflow-y-auto rounded-l-3xl border border-white/10 p-6 shadow-2xl"
+              className="glass h-full w-full max-w-xs overflow-y-auto rounded-l-3xl border border-white/10 p-6 shadow-2xl"
               role="dialog"
               aria-modal="true"
               aria-labelledby="settings-title"
