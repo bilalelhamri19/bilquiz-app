@@ -9,7 +9,7 @@ import QuizCard from "@/components/QuizCard";
 import GroupSelect, { GroupInfo } from "@/components/GroupSelect";
 import GroupResult from "@/components/GroupResult";
 import { SiteFooter } from "@/components/SiteLayout";
-import { riddles, Language } from "@/data/riddles";
+import { languages, riddles, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
@@ -22,7 +22,7 @@ const STORAGE_KEY = "bilquiz_progress";
 const THEME_STORAGE_KEY = "bilquiz_theme";
 const COINS_PER_CORRECT_ANSWER = 5;
 
-// Split riddles into groups of 8
+// Split riddles into groups of 10
 const allGroups = Array.from(
   { length: Math.ceil(riddles.length / QUESTIONS_PER_GROUP) },
   (_, i) => riddles.slice(i * QUESTIONS_PER_GROUP, (i + 1) * QUESTIONS_PER_GROUP)
@@ -149,9 +149,9 @@ const Index = () => {
   const [resolvedQuestions, setResolvedQuestions] = useState<Set<number>>(new Set());
   const [isQuestionTransitioning, setIsQuestionTransitioning] = useState(false);
 
-  const dir = "rtl";
-  const language: Language = "ar";
+  const [language, setLanguage] = useState<Language>("ar");
 
+  const dir = languages.find((option) => option.code === language)?.dir ?? "rtl";
   const t = ui[language];
 
   const currentGroupQuestions = allGroups[currentGroupIndex] ?? [];
@@ -169,9 +169,18 @@ const Index = () => {
       const lightMode = localStorage.getItem(THEME_STORAGE_KEY) === "light";
       setIsLightMode(lightMode);
       document.documentElement.classList.toggle("theme-light", lightMode);
+
+      const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY) as Language | null;
+      if (savedLanguage && languages.some((option) => option.code === savedLanguage)) {
+        setLanguage(savedLanguage);
+      }
     } catch {}
     setHasMounted(true);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dir = dir;
+  }, [dir]);
 
   // Build GroupInfo array for the selector
   const groupInfos: GroupInfo[] = allGroups.map((grp, i) => ({
@@ -256,6 +265,14 @@ const Index = () => {
     document.documentElement.classList.toggle("theme-light", nextMode);
     try {
       localStorage.setItem(THEME_STORAGE_KEY, nextMode ? "light" : "dark");
+    } catch {}
+  };
+
+  const changeLanguage = (nextLanguage: Language) => {
+    if (!languages.some((option) => option.code === nextLanguage)) return;
+    setLanguage(nextLanguage);
+    try {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
     } catch {}
   };
 
@@ -604,6 +621,30 @@ const Index = () => {
                   مفعّل
                 </span>
               </button>
+
+              <div className="mt-5">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="text-sm font-bold text-white">{t.changeLanguage}</span>
+                  <span className="text-xs text-white/40">{language.toUpperCase()}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {languages.map((option) => (
+                    <button
+                      key={option.code}
+                      type="button"
+                      onClick={() => changeLanguage(option.code)}
+                      className={`rounded-2xl border px-3 py-2 text-sm font-bold transition ${
+                        option.code === language
+                          ? "border-emerald-400 bg-emerald-500/10 text-emerald-200"
+                          : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
+                      }`}
+                    >
+                      <span className="mr-2">{option.flag}</span>
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <nav aria-label="روابط BilQuiz" className="mt-4 flex flex-col gap-2 text-sm font-bold">
                 <button type="button" onClick={shareGame} className="flex items-center gap-2 rounded-xl px-3 py-2 text-right text-white/65 transition-colors hover:bg-white/5 hover:text-emerald-300">

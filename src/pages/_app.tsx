@@ -24,7 +24,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
         <link rel="apple-touch-icon" href="/logo.jpeg" />
         <link rel="manifest" href="/manifest.json" />
-        <meta property="og:image" content="/logo.jpeg" />
       </Head>
       <Component {...pageProps} />
     </>
