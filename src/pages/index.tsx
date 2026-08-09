@@ -596,6 +596,7 @@ const Index = () => {
             <Link href="/how-to-play" className="hover:text-emerald-300">كيف تلعب</Link>
             <Link href="/faq" className="hover:text-emerald-300">الأسئلة الشائعة</Link>
             <Link href="/about" className="hover:text-emerald-300">من نحن</Link>
+            <Link href="/contact" className="hover:text-emerald-300">تواصل معنا</Link>
             <Link href="/privacy" className="hover:text-emerald-300">سياسة الخصوصية</Link>
           </div>
         </footer>

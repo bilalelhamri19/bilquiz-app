@@ -30,6 +30,13 @@ const PrivacyPage = () => (
           </div>
 
           <div>
+            <h2 className="text-xl font-black text-white">التواصل معنا</h2>
+            <p>
+              إذا أرسلت رسالة من صفحة التواصل، فإننا نتلقى الاسم والبريد الإلكتروني ومحتوى رسالتك للرد على طلبك. تتم معالجة هذه الرسائل بواسطة خدمة FormSubmit، ولا نستخدمها للتسويق أو نشاركها مع جهات أخرى.
+            </p>
+          </div>
+
+          <div>
             <h2 className="text-xl font-black text-white">الحسابات والأذونات</h2>
             <p>
               لا يطلب التطبيق إنشاء حساب، ولا يطلب الوصول إلى الموقع الجغرافي أو الكاميرا أو الميكروفون أو جهات الاتصال أو الملفات الشخصية.
@@ -53,8 +60,9 @@ const PrivacyPage = () => (
           <div>
             <h2 className="text-xl font-black text-white">التغييرات والتواصل</h2>
             <p>
-              قد نحدّث هذه السياسة عند تغيير وظائف التطبيق. للاستفسارات أو طلب حذف بيانات التقدم المحلية، افتح طلباً عبر صفحة مشروع BilQuiz على GitHub. يمكنك أيضاً حذف بيانات التطبيق من إعدادات جهازك أو من بيانات المتصفح.
+              قد نحدّث هذه السياسة عند تغيير وظائف التطبيق. للاستفسارات أو طلب حذف بيانات التقدم المحلية، استعمل صفحة التواصل أو افتح طلباً عبر صفحة مشروع BilQuiz على GitHub. يمكنك أيضاً حذف بيانات التطبيق من إعدادات جهازك أو من بيانات المتصفح.
             </p>
+            <Link href="/contact" className="mt-3 inline-block font-bold text-emerald-300 underline underline-offset-4 hover:text-emerald-200">صفحة التواصل</Link>
             <a
               className="font-bold text-emerald-300 underline underline-offset-4 hover:text-emerald-200"
               href="https://github.com/bilalelhamri19/bilquiz-app/issues"
