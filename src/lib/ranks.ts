@@ -5,8 +5,8 @@ const RANKS: { title: string; threshold: number }[] = [
   { title: "مبتدئ", threshold: 0 },
   { title: "ذكي", threshold: 15 },
   { title: "محترف", threshold: 50 },
-  { title: "عبقري", threshold: 150 },
-  { title: "أسطورة الألغاز", threshold: 400 },
+  { title: "عبقري", threshold: 110 },
+  { title: "أسطورة الألغاز", threshold: 180 },
 ];
 
 export const computeTotalStars = (progress: Progress): number => {

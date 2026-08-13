@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ui } from "@/data/i18n";
-import { Trophy, Coins, CheckCircle, Award } from "lucide-react";
+import { Trophy, Coins, CheckCircle, Award, Star } from "lucide-react";
 
 interface WelcomeScreenProps {
   onStartQuiz: () => void;
   coins: number;
   completedGroupsCount: number;
   totalGroupsCount: number;
+  rankTitle: string;
+  totalStars: number;
+  maxStars: number;
 }
 
 const WelcomeScreen = ({
@@ -15,20 +18,23 @@ const WelcomeScreen = ({
   coins,
   completedGroupsCount,
   totalGroupsCount,
+  rankTitle,
+  totalStars,
+  maxStars,
 }: WelcomeScreenProps) => {
   const t = ui.ar;
 
-  // Determine user rank based on completed groups
-  const getUserRank = () => {
-    if (completedGroupsCount === 0) return { title: "مبتدئ 🛡️", color: "text-slate-400" };
-    if (completedGroupsCount < 3) return { title: "ذكي 🧠", color: "text-blue-400" };
-    if (completedGroupsCount < 7) return { title: "محترف ⚡", color: "text-amber-400" };
-    if (completedGroupsCount < 15) return { title: "عبقري 🔮", color: "text-violet-400" };
-    return { title: "أسطورة الألغاز 🏆", color: "text-emerald-400 font-extrabold" };
+  const rankBadgeColor = (title: string) => {
+    if (title.includes("أسطورة")) return "text-emerald-400 font-extrabold";
+    if (title.includes("عبقري")) return "text-violet-400";
+    if (title.includes("محترف")) return "text-amber-400";
+    if (title.includes("ذكي")) return "text-blue-400";
+    return "text-slate-400";
   };
 
-  const rank = getUserRank();
   const progressPercent = Math.round((completedGroupsCount / totalGroupsCount) * 100) || 0;
+  const starsPercent = Math.round((totalStars / Math.max(1, maxStars)) * 100) || 0;
+  const rankColor = rankBadgeColor(rankTitle);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-full text-center px-4 py-8" dir="rtl">
@@ -71,7 +77,7 @@ const WelcomeScreen = ({
           <div className="bg-white/3 rounded-2xl p-3 border border-white/5 flex flex-col items-center justify-center">
             <Award className="h-5 w-5 text-violet-400 mb-1.5" />
             <span className="text-[10px] text-white/40 mb-0.5">الرتبة الحالية</span>
-            <span className={`text-xs font-black ${rank.color}`}>{rank.title}</span>
+            <span className={`text-xs font-black ${rankColor}`}>{rankTitle}</span>
           </div>
 
           {/* Coins */}
@@ -81,11 +87,11 @@ const WelcomeScreen = ({
             <span className="text-xs font-black text-amber-300">{coins} 🪙</span>
           </div>
 
-          {/* Progress */}
+          {/* Stars */}
           <div className="bg-white/3 rounded-2xl p-3 border border-white/5 flex flex-col items-center justify-center">
-            <Trophy className="h-5 w-5 text-emerald-400 mb-1.5" />
-            <span className="text-[10px] text-white/40 mb-0.5">المجموعات المنجزة</span>
-            <span className="text-xs font-black text-emerald-400">{completedGroupsCount} / {totalGroupsCount}</span>
+            <Star className="h-5 w-5 text-amber-400 mb-1.5 fill-amber-400" />
+            <span className="text-[10px] text-white/40 mb-0.5">النجوم المجمعة</span>
+            <span className="text-xs font-black text-amber-300">{totalStars} ⭐</span>
           </div>
         </div>
 
@@ -93,7 +99,7 @@ const WelcomeScreen = ({
         <div className="mt-5">
           <div className="flex justify-between text-[10px] text-white/40 mb-1.5">
             <span>معدل الإنجاز الكلي</span>
-            <span>{progressPercent}%</span>
+            <span>{progressPercent}% · {starsPercent}% نجوم</span>
           </div>
           <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
             <motion.div 

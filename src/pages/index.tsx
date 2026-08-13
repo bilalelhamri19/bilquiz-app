@@ -280,8 +280,8 @@ const RANKS: { title: string; threshold: number }[] = [
   { title: "مبتدئ", threshold: 0 },
   { title: "ذكي", threshold: 15 },
   { title: "محترف", threshold: 50 },
-  { title: "عبقري", threshold: 150 },
-  { title: "أسطورة الألغاز", threshold: 400 },
+  { title: "عبقري", threshold: 110 },
+  { title: "أسطورة الألغاز", threshold: 180 },
 ];
 
 const getRank = (p: Progress) => {
@@ -787,6 +787,9 @@ const Index = () => {
                   coins={progress.coins}
                   completedGroupsCount={Object.keys(progress.completedGroups).length}
                   totalGroupsCount={totalGroups}
+                  rankTitle={rank.title}
+                  totalStars={achievementStats.totalStars}
+                  maxStars={maxStars}
                 />
                 {/* Quick actions under welcome */}
                 <div className="mt-6 mx-auto max-w-xl grid grid-cols-2 sm:grid-cols-4 gap-3">
