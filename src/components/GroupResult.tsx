@@ -4,6 +4,7 @@ import { Star, RotateCcw, ChevronLeft, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import { getStars } from "@/lib/scoring";
+import AdBanner from "./AdBanner";
 
 
 interface GroupResultProps {
@@ -201,6 +202,8 @@ const GroupResult = ({
           </button>
         </div>
       </motion.div>
+
+      <AdBanner className="mt-4" />
     </motion.div>
   );
 };

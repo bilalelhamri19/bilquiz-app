@@ -5,6 +5,7 @@ import { ui } from "@/data/i18n";
 import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins, ArrowRight } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { normalizeAnswer, normalizeForCompare, isNumericAnswer, answersMatch } from "@/lib/answer-normalize";
+import AdBanner from "./AdBanner";
 
 interface QuizCardProps {
   riddle: Riddle;
@@ -353,6 +354,8 @@ const QuizCard = ({ riddle, coins, onSpendCoins, onCorrectAnswer, onSkip, onBack
                 </motion.span>
               )}
             </AnimatePresence>
+
+            <AdBanner className="mt-4" />
           </div>
         </div>
       </motion.div>

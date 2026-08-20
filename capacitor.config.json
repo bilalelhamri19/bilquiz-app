@@ -1,0 +1,16 @@
+{
+  "appId": "com.bilalelhamri.bilquiz",
+  "appName": "BilQuiz",
+  "webDir": "out",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "url": "https://bilquiz1.com",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

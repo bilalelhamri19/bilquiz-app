@@ -145,7 +145,257 @@ const baseRiddles: Riddle[] = [
     },
   },
   {
-    id: 6,
+    id: 11,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يطير بلا جناحين ويبكي بلا عينين؟",
+        answers: ["سحابة", "السحابة", "غيمة", "الغيمة", "مطر"],
+        hint: "تراها في السماء وتأتي بالماء",
+      },
+      en: {
+        question: "What flies without wings and cries without eyes?",
+        answers: ["cloud", "a cloud"],
+        hint: "You see it in the sky bringing rain",
+      },
+      fr: {
+        question: "Qu'est-ce qui vole sans ailes et pleure sans yeux ?",
+        answers: ["nuage", "un nuage"],
+        hint: "Tu le vois dans le ciel apportant la pluie",
+      },
+      es: {
+        question: "¿Qué vuela sin alas y llora sin ojos?",
+        answers: ["nube", "una nube"],
+        hint: "La ves en el cielo trayendo lluvia",
+      },
+    },
+  },
+  {
+    id: 12,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يملاء الغرفة كاملة دون أن يأخذ أي مساحة؟",
+        answers: ["ضوء", "الضوء", "نور", "النور"],
+        hint: "ينتشر في المكان عند إشعال المصباح",
+      },
+      en: {
+        question: "What can fill an entire room without taking up any space?",
+        answers: ["light", "the light"],
+        hint: "It spreads when you turn on a lamp",
+      },
+      fr: {
+        question: "Qu'est-ce qui peut remplir une pièce entière sans prendre d'espace ?",
+        answers: ["lumiere", "lumière", "la lumière"],
+        hint: "Elle se diffuse quand tu allumes une lampe",
+      },
+      es: {
+        question: "¿Qué puede llenar una habitación entera sin ocupar espacio?",
+        answers: ["luz", "la luz"],
+        hint: "Se extiende al encender la lámpara",
+      },
+    },
+  },
+  {
+    id: 13,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي ينكسر بمجرد أن تنطق باسمه؟",
+        answers: ["صمت", "الصمت"],
+        hint: "يتلاشى عند التكلم",
+      },
+      en: {
+        question: "What breaks as soon as you say its name?",
+        answers: ["silence", "the silence"],
+        hint: "It disappears when you speak",
+      },
+      fr: {
+        question: "Qu'est-ce qui se brise dès qu'on prononce son nom ?",
+        answers: ["silence", "le silence"],
+        hint: "Il disparaît quand tu parles",
+      },
+      es: {
+        question: "¿Qué se rompe tan pronto como dices su nombre?",
+        answers: ["silencio", "el silencio"],
+        hint: "Desaparece cuando hablas",
+      },
+    },
+  },
+  {
+    id: 14,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يملك عيناً واحدة ولكنه لا يستطيع الرؤية بها؟",
+        answers: ["إبرة", "ابرة", "الإبرة", "الابرة"],
+        hint: "تستعمل في الخياطة",
+      },
+      en: {
+        question: "What has one eye but cannot see?",
+        answers: ["needle", "a needle"],
+        hint: "Used for sewing clothes",
+      },
+      fr: {
+        question: "Qu'est-ce qui a un œil mais ne peut pas voir ?",
+        answers: ["aiguille", "une aiguille"],
+        hint: "Utilisée pour coudre",
+      },
+      es: {
+        question: "¿Qué tiene un ojo pero no puede ver?",
+        answers: ["aguja", "una aguja"],
+        hint: "Usada para coser",
+      },
+    },
+  },
+  {
+    id: 15,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يسير بلا أرجل ويدخل الأذنين دون استئذان؟",
+        answers: ["صوت", "الصوت"],
+        hint: "تسمعه بأذنيك",
+      },
+      en: {
+        question: "What travels without legs and enters your ears without permission?",
+        answers: ["sound", "a sound"],
+        hint: "You hear it with your ears",
+      },
+      fr: {
+        question: "Qu'est-ce qui se déplace sans jambes et entre dans tes oreilles sans permission ?",
+        answers: ["son", "le son"],
+        hint: "Tu l'entends avec tes oreilles",
+      },
+      es: {
+        question: "¿Qué viaja sin piernas y entra en tus oídos sin permiso?",
+        answers: ["sonido", "el sonido"],
+        hint: "Lo escuchas con tus oídos",
+      },
+    },
+  },
+  {
+    id: 16,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يملك أوراقاً ولكن ليس شجرة، وله غلاف وليس هدية؟",
+        answers: ["كتاب", "الكتاب", "دفتر", "الدفتر"],
+        hint: "تقرأ منه المعلومات والقصص",
+      },
+      en: {
+        question: "What has pages but is not a tree, and has a cover but is not a gift?",
+        answers: ["book", "a book"],
+        hint: "You read stories and info from it",
+      },
+      fr: {
+        question: "Qu'est-ce qui a des pages mais n'est pas un arbre, et une couverture mais n'est pas un cadeau ?",
+        answers: ["livre", "un livre"],
+        hint: "Tu y lis des histoires et des connaissances",
+      },
+      es: {
+        question: "¿Qué tiene páginas pero no es un árbol, y portada pero no es un regalo?",
+        answers: ["libro", "un libro"],
+        hint: "Lees historias en él",
+      },
+    },
+  },
+  {
+    id: 17,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يكون أسود عند شرائه، وأحمر عند استخدامه، ورامادياً عند التخلص منه؟",
+        answers: ["فحم", "الفحم"],
+        hint: "يستعمل للشواء والتسخين",
+      },
+      en: {
+        question: "What is black when bought, red when used, and gray when thrown away?",
+        answers: ["coal", "charcoal"],
+        hint: "Used for grilling and heating",
+      },
+      fr: {
+        question: "Qu'est-ce qui est noir quand on l'achète, rouge quand on l'utilise, et gris quand on le jette ?",
+        answers: ["charbon", "le charbon"],
+        hint: "Utilisé pour les grillades et le chauffage",
+      },
+      es: {
+        question: "¿Qué es negro al comprarlo, rojo al usarlo y gris al tirarlo?",
+        answers: ["carbón", "el carbón"],
+        hint: "Usado para barbacoas",
+      },
+    },
+  },
+  {
+    id: 18,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يصعد دائماً ولا ينزل أبداً؟",
+        answers: ["عمر", "العمر", "السن"],
+        hint: "يزداد مع كل سنة تمر",
+      },
+      en: {
+        question: "What goes up but never comes down?",
+        answers: ["age", "your age"],
+        hint: "It increases with every passing year",
+      },
+      fr: {
+        question: "Qu'est-ce qui monte toujours et ne descend jamais ?",
+        answers: ["age", "âge", "l'âge"],
+        hint: "Il augmente chaque année qui passe",
+      },
+      es: {
+        question: "¿Qué sube siempre y nunca baja?",
+        answers: ["edad", "la edad"],
+        hint: "Aumenta con cada año que pasa",
+      },
+    },
+  },
+  {
+    id: 19,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يملك أسناناً كثيرة ولكنه لا يعض؟",
+        answers: ["مشط", "المشط"],
+        hint: "تستعمله لتسريح شعرك",
+      },
+      en: {
+        question: "What has many teeth but cannot bite?",
+        answers: ["comb", "a comb"],
+        hint: "You use it to style your hair",
+      },
+      fr: {
+        question: "Qu'est-ce qui a beaucoup de dents mais ne mord pas ?",
+        answers: ["peigne", "un peigne"],
+        hint: "Tu l'utilises pour te coiffer",
+      },
+      es: {
+        question: "¿Qué tiene muchos dientes pero no muerde?",
+        answers: ["peine", "el peine"],
+        hint: "Lo usas para peinarte",
+      },
+    },
+  },
+  {
+    id: 20,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يبقيك دافئاً، لكنه إن كَبُر يلتهم ويحرق كل ما حوله؟",
+        answers: ["نار", "النار"],
+        hint: "تستعملها للطهي والتسخين لكنها خطيرة",
+      },
+      en: {
+        question: "What keeps you warm, but if it grows it consumes everything around it?",
+        answers: ["fire", "the fire"],
+        hint: "Used for cooking and heat, but dangerous if untamed",
+      },
+      fr: {
+        question: "Qu'est-ce qui te réchauffe, mais peut tout dévorer s'il grandit ?",
+        answers: ["feu", "le feu"],
+        hint: "Utilisé pour cuisiner mais dangereux",
+      },
+      es: {
+        question: "¿Qué te mantiene caliente, pero si crece consume todo a su paso?",
+        answers: ["fuego", "el fuego"],
+        hint: "Usado para cocinar y calentar",
+      },
+    },
+  },
+  {
+    id: 21,
     translations: {
       ar: {
         question: "ما هو الشيء الذي له رأس وذيل لكن بلا جسد؟",
@@ -170,7 +420,7 @@ const baseRiddles: Riddle[] = [
     },
   },
   {
-    id: 7,
+    id: 22,
     translations: {
       ar: {
         question: "أنا خفيف كالريشة، لكن أقوى إنسان لا يستطيع حملي لأكثر من دقائق. ما أنا؟",
@@ -195,7 +445,7 @@ const baseRiddles: Riddle[] = [
     },
   },
   {
-    id: 8,
+    id: 23,
     translations: {
       ar: {
         question: "ما هو الشيء الذي له مفاتيح كثيرة ولا يفتح أي قفل؟",
@@ -220,7 +470,7 @@ const baseRiddles: Riddle[] = [
     },
   },
   {
-    id: 9,
+    id: 24,
     translations: {
       ar: {
         question: "ما هو الشيء الذي له أرجل ولا يسير؟",
@@ -245,7 +495,7 @@ const baseRiddles: Riddle[] = [
     },
   },
   {
-    id: 10,
+    id: 25,
     translations: {
       ar: {
         question: "كلما أخذت منه أكثر، كبر أكثر. ما هو؟",
