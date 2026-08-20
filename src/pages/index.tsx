@@ -12,10 +12,6 @@ import {
   ShieldCheck,
   Sun,
   X,
-  Volume2,
-  VolumeX,
-  Music,
-  Music2,
   Trophy,
   Gift,
   BarChart3,
@@ -36,22 +32,12 @@ import { ui } from "@/data/i18n";
 import { ACHIEVEMENTS, Achievement } from "@/data/achievements";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
-import {
-  playCorrect,
-  playWrong,
-  playWin,
-  startBackgroundMusic,
-  stopBackgroundMusic,
-  setSoundEnabled,
-} from "@/lib/audio";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 const QUESTIONS_PER_GROUP = 10;
 const MIN_SCORE_TO_UNLOCK_GROUP = 6;
 const STORAGE_KEY = "bilquiz_progress";
 const THEME_STORAGE_KEY = "bilquiz_theme";
-const SOUND_STORAGE_KEY = "bilquiz_sound";
-const MUSIC_STORAGE_KEY = "bilquiz_music";
 const COINS_PER_CORRECT_ANSWER = 5;
 
 // Split riddles into groups of 10
@@ -308,8 +294,6 @@ const Index = () => {
   const [hasMounted, setHasMounted] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLightMode, setIsLightMode] = useState(false);
-  const [isSoundOn, setIsSoundOn] = useState(true);
-  const [isMusicOn, setIsMusicOn] = useState(false);
 
   const [isDailyRewardOpen, setIsDailyRewardOpen] = useState(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
@@ -375,20 +359,6 @@ const Index = () => {
       document.documentElement.classList.toggle("theme-light", lightMode);
     } catch {}
 
-    // Sound + music
-    try {
-      const savedSound = localStorage.getItem(SOUND_STORAGE_KEY);
-      const sound = savedSound === null ? true : savedSound === "on";
-      setIsSoundOn(sound);
-      setSoundEnabled(sound);
-    } catch {}
-
-    try {
-      const savedMusic = localStorage.getItem(MUSIC_STORAGE_KEY) === "on";
-      setIsMusicOn(savedMusic);
-      if (savedMusic) startBackgroundMusic();
-    } catch {}
-
     setHasMounted(true);
 
     // Open daily rewards if not claimed today
@@ -398,26 +368,6 @@ const Index = () => {
       return () => window.clearTimeout(t);
     }
   }, []);
-
-  // ── Sound toggles ──────────────────────────────────────────────────────
-  const toggleSound = () => {
-    const next = !isSoundOn;
-    setIsSoundOn(next);
-    setSoundEnabled(next);
-    try {
-      localStorage.setItem(SOUND_STORAGE_KEY, next ? "on" : "off");
-    } catch {}
-  };
-
-  const toggleMusic = () => {
-    const next = !isMusicOn;
-    setIsMusicOn(next);
-    if (next) startBackgroundMusic();
-    else stopBackgroundMusic();
-    try {
-      localStorage.setItem(MUSIC_STORAGE_KEY, next ? "on" : "off");
-    } catch {}
-  };
 
   // ── Group info builder ─────────────────────────────────────────────────
   const groupInfos: GroupInfo[] = allGroups.map((grp, i) => ({
@@ -488,8 +438,6 @@ const Index = () => {
   };
 
   const handleCorrectAnswer = (questionIndex: number) => {
-    if (isSoundOn) playCorrect();
-
     const newScore = groupScore + 1;
     const nextGroup = currentGroupIndex + 1;
     const unlocksNextGroup =
@@ -571,7 +519,6 @@ const Index = () => {
   };
 
   const handleSkip = (questionIndex: number) => {
-    if (isSoundOn) playWrong();
     resolveQuestion(groupScore, questionIndex);
   };
 
@@ -616,8 +563,6 @@ const Index = () => {
 
   const completeGroup = useCallback(
     (score: number) => {
-      if (isSoundOn) playWin();
-
       setProgress((current) => {
         const inProgressGroups = Object.fromEntries(
           Object.entries(current.inProgressGroups).filter(
@@ -662,7 +607,7 @@ const Index = () => {
       setGroupScore(score);
       setAppState("groupResult");
     },
-    [currentGroupIndex, totalGroups, isSoundOn, checkAndUnlockAchievements]
+    [currentGroupIndex, totalGroups, checkAndUnlockAchievements]
   );
 
   const progressPercent = Math.round(
@@ -739,26 +684,6 @@ const Index = () => {
           )}
 
           <div className="flex items-center gap-2">
-            {/* Sound quick-toggle */}
-            <button
-              type="button"
-              onClick={toggleSound}
-              aria-label={isSoundOn ? "إيقاف الصوت" : "تشغيل الصوت"}
-              className="btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white"
-            >
-              {isSoundOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
-            </button>
-            <button
-              type="button"
-              onClick={toggleMusic}
-              aria-label={isMusicOn ? "إيقاف الموسيقى" : "تشغيل الموسيقى"}
-              className={`btn-ghost-dark h-10 w-10 rounded-xl flex items-center justify-center hover:text-white ${
-                isMusicOn ? "text-violet-300" : "text-white/70"
-              }`}
-            >
-              {isMusicOn ? <Music2 size={18} /> : <Music size={18} />}
-            </button>
-
             <button
               type="button"
               onClick={() => setIsSettingsOpen(true)}
@@ -997,59 +922,6 @@ const Index = () => {
                 >
                   <Settings size={20} className="text-emerald-400" /> الإعدادات
                 </h2>
-              </div>
-
-              {/* Sound + Music */}
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={toggleSound}
-                  aria-pressed={isSoundOn}
-                  className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-right hover:bg-white/10"
-                >
-                  <span className="flex items-center gap-3 text-white font-bold">
-                    {isSoundOn ? (
-                      <Volume2 className="text-emerald-400" />
-                    ) : (
-                      <VolumeX className="text-white/40" />
-                    )}
-                    الصوت والمؤثرات
-                  </span>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${
-                      isSoundOn
-                        ? "bg-emerald-400/15 text-emerald-300"
-                        : "bg-white/5 text-white/40"
-                    }`}
-                  >
-                    {isSoundOn ? "مفعّل" : "موقوف"}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={toggleMusic}
-                  aria-pressed={isMusicOn}
-                  className="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-right hover:bg-white/10"
-                >
-                  <span className="flex items-center gap-3 text-white font-bold">
-                    {isMusicOn ? (
-                      <Music2 className="text-violet-400" />
-                    ) : (
-                      <Music className="text-white/40" />
-                    )}
-                    الموسيقى الخلفية
-                  </span>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${
-                      isMusicOn
-                        ? "bg-violet-400/15 text-violet-300"
-                        : "bg-white/5 text-white/40"
-                    }`}
-                  >
-                    {isMusicOn ? "مفعّلة" : "موقوفة"}
-                  </span>
-                </button>
               </div>
 
               {/* Theme */}
