@@ -4,7 +4,7 @@ import { Riddle } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { HelpCircle, CheckCircle, XCircle, SkipForward, Delete, Trash2, Coins, ArrowRight } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-
+import { normalizeAnswer, normalizeForCompare, isNumericAnswer, answersMatch } from "@/lib/answer-normalize";
 
 interface QuizCardProps {
   riddle: Riddle;
@@ -17,23 +17,6 @@ interface QuizCardProps {
 }
 
 const HINT_COST = 10;
-
-const normalize = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f\u064b-\u0652]/g, "")
-    .replace(/[أإآ]/g, "ا")
-    .replace(/[ىي]/g, "ي")
-    .replace(/ة/g, "ه")
-    .replace(/^(the |a |an |le |la |les |un |une |el )/, "")
-    .replace(/\s+/g, " ");
-
-const normalizeForCompare = (value: string) =>
-  normalize(value).replace(/\s+/g, "");
-
-const isNumeric = (value: string) => /^\d+$/.test(value);
 
 const ARABIC_LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي", "ة", "ى"];
 const NUMERIC_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -73,7 +56,7 @@ const QuizCard = ({ riddle, coins, onSpendCoins, onCorrectAnswer, onSkip, onBack
 
     const cleanAnswer = primaryAnswer.replace(/\s+/g, "");
     const answerChars = Array.from(cleanAnswer);
-    const alphabet = isNumeric(primaryAnswer)
+    const alphabet = isNumericAnswer(primaryAnswer)
       ? NUMERIC_DIGITS
       : ARABIC_LETTERS;
 
@@ -108,10 +91,7 @@ const QuizCard = ({ riddle, coins, onSpendCoins, onCorrectAnswer, onSkip, onBack
 
   const checkAnswer = (currentSelection: (SelectedLetter | null)[]) => {
     const answerString = currentSelection.map((s) => s?.char ?? "").join("");
-    const answers = content.answers;
-    const isAnswerCorrect = answers.some(
-      (a) => normalizeForCompare(a) === normalizeForCompare(answerString)
-    );
+    const isAnswerCorrect = answersMatch(answerString, content.answers);
 
     setIsCorrect(isAnswerCorrect);
 
@@ -231,7 +211,7 @@ const QuizCard = ({ riddle, coins, onSpendCoins, onCorrectAnswer, onSkip, onBack
             {/* Answer Slots Display */}
             <div className="flex flex-wrap justify-center gap-6 py-2">
               {wordSlots.map((slots, wordIdx) => (
-                <div key={wordIdx} dir={isNumeric(words[wordIdx]) ? "ltr" : undefined} className="flex gap-1.5">
+                <div key={wordIdx} dir={isNumericAnswer(words[wordIdx]) ? "ltr" : undefined} className="flex gap-1.5">
                   {slots.map((slotIndex) => {
                     const selectedItem = selected[slotIndex];
                     return (
