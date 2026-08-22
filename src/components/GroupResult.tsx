@@ -1,11 +1,10 @@
 
 import { motion } from "framer-motion";
-import { Star, RotateCcw, ChevronLeft, Trophy } from "lucide-react";
+import { Star, RotateCcw, ChevronLeft, Trophy, Share2, Check } from "lucide-react";
 import confetti from "canvas-confetti";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getStars } from "@/lib/scoring";
 import AdBanner from "./AdBanner";
-
 
 interface GroupResultProps {
   groupIndex: number;
@@ -19,7 +18,6 @@ interface GroupResultProps {
   onBackToGroups: () => void;
   onReplayGroup: () => void;
 }
-
 
 const GroupResult = ({
   groupIndex,
@@ -35,9 +33,9 @@ const GroupResult = ({
 }: GroupResultProps) => {
   const pct = Math.round((score / total) * 100);
   const stars = getStars(score, total);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-
     if (stars >= 2) {
       confetti({
         particleCount: 120,
@@ -47,6 +45,27 @@ const GroupResult = ({
       });
     }
   }, [stars]);
+
+  const handleShareChallenge = async () => {
+    const shareText = `🧩 أنجزت المجموعة ${groupIndex + 1} بنتيجة ${score}/${total} في تطبيق BilQuiz! 🌟 هل تجرؤ على التحدي وحل هذه الألغاز؟ جرب الآن عبر الرابط: https://bilquiz1.com`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "تحدي BilQuiz للألغاز",
+          text: shareText,
+          url: "https://bilquiz1.com",
+        });
+        return;
+      } catch (e) {
+        // Fallback to clipboard
+      }
+    }
+    
+    await navigator.clipboard.writeText(shareText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  };
 
   const getMessage = () => {
     if (pct >= 90) return "رائع! أنت بطل هذه المجموعة! 🏆";
@@ -141,6 +160,18 @@ const GroupResult = ({
         </div>
       </motion.div>
 
+      {/* Share / Challenge Button */}
+      <motion.button
+        onClick={handleShareChallenge}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65 }}
+        className="w-full mb-6 glass rounded-2xl py-3 px-4 flex items-center justify-center gap-2 border border-amber-500/30 text-amber-300 font-bold hover:bg-amber-500/10 transition"
+      >
+        {copied ? <Check size={18} className="text-emerald-400" /> : <Share2 size={18} />}
+        <span>{copied ? "تم نسخ نص التحدي للحافظة!" : "تحدَّ أصدقاءك بهذه النتيجة 🔥"}</span>
+      </motion.button>
+
       {/* Unlock Message */}
       {!isLastGroup && canUnlockNextGroup && (
         <motion.div
@@ -209,3 +240,4 @@ const GroupResult = ({
 };
 
 export default GroupResult;
+
