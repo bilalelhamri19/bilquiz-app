@@ -11,13 +11,9 @@ interface SiteLayoutProps {
 export const SiteFooter = () => (
   <footer className="border-t border-white/5 px-4 py-5 sm:px-6">
     <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-4 text-center sm:flex-row sm:text-right">
-      <Link href="/" className="flex items-center gap-3 group">
+      <Link href="/" className="group">
         <div className="h-10 w-10 overflow-hidden rounded-xl border border-emerald-400/20 group-hover:scale-105 transition-transform">
           <Image src="/logo.jpeg" alt="BilQuiz" width={40} height={40} className="h-full w-full object-cover" />
-        </div>
-        <div>
-          <p dir="ltr" className="font-black tracking-wide text-white group-hover:text-emerald-400 transition-colors">BilQuiz</p>
-          <p className="mt-0.5 text-xs text-white/40">ألغاز وأسئلة لتختبر ذكاءك</p>
         </div>
       </Link>
       <nav aria-label="روابط BilQuiz" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-bold text-white/55">
@@ -39,11 +35,8 @@ const SiteLayout = ({ children, pageTitle }: SiteLayoutProps) => (
           <Home size={18} /> الرئيسية
         </Link>
 
-        <Link href="/" className="flex items-center gap-3">
-          <span className="font-bold text-lg text-white">
-            {pageTitle ?? "BilQuiz"}
-          </span>
-          <div className="h-10 w-10 overflow-hidden rounded-xl">
+        <Link href="/" className="group">
+          <div className="h-10 w-10 overflow-hidden rounded-xl group-hover:scale-105 transition-transform">
             <Image src="/logo.jpeg" alt="BilQuiz" width={40} height={40} priority className="h-full w-full object-cover" />
           </div>
         </Link>

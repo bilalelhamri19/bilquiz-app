@@ -657,7 +657,6 @@ const Index = () => {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="text-white font-bold text-lg hidden sm:block group-hover:text-emerald-400 transition-colors">BilQuiz</span>
           </div>
 
           {/* Center — progress during quiz */}
