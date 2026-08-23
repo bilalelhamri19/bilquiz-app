@@ -647,26 +647,7 @@ const Index = () => {
                 </span>
               </button>
 
-              {/* Language Selector */}
-              <div className="mt-4">
-                <h3 className="text-sm font-bold text-white mb-2">{t.chooseLanguage || "اختر اللغة"}</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => changeLanguage(lang.code)}
-                      className={`flex items-center justify-center gap-2 p-2 rounded-xl text-sm font-bold border transition-colors ${
-                        language === lang.code
-                          ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                          : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"
-                      }`}
-                    >
-                      <span className="text-lg">{lang.flag}</span>
-                      <span>{lang.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+
 
               {/* Quick Modals */}
               <div className="mt-5 grid grid-cols-2 gap-2">

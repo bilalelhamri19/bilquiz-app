@@ -5,42 +5,29 @@ import { ui } from "@/data/i18n";
 const LANGUAGE_STORAGE_KEY = "bilquiz_language";
 
 export const useLanguage = () => {
-  const [language, setLanguage] = useState<Language>("ar");
+  const language: Language = "ar";
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY) as Language;
-      if (saved && languages.some((l) => l.code === saved)) {
-        setLanguage(saved);
-      }
-    } catch {}
     setHasMounted(true);
   }, []);
 
   const changeLanguage = (newLang: Language) => {
-    setLanguage(newLang);
-    try {
-      localStorage.setItem(LANGUAGE_STORAGE_KEY, newLang);
-      document.documentElement.dir = languages.find((l) => l.code === newLang)?.dir || "ltr";
-      document.documentElement.lang = newLang;
-    } catch {}
+    // Disabled as per user request to force Arabic
   };
 
   useEffect(() => {
      if (hasMounted) {
-         document.documentElement.dir = languages.find((l) => l.code === language)?.dir || "ltr";
-         document.documentElement.lang = language;
+         document.documentElement.dir = "rtl";
+         document.documentElement.lang = "ar";
      }
-  }, [language, hasMounted]);
-
-  const currentLanguageInfo = languages.find((l) => l.code === language)!;
+  }, [hasMounted]);
 
   return {
-    language,
+    language: "ar" as Language,
     changeLanguage,
-    dir: currentLanguageInfo?.dir || "ltr",
-    t: ui[language] || ui["ar"],
+    dir: "rtl" as const,
+    t: ui["ar"],
     hasMounted,
   };
 };
