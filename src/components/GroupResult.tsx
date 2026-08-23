@@ -47,14 +47,14 @@ const GroupResult = ({
   }, [stars]);
 
   const handleShareChallenge = async () => {
-    const shareText = `🧩 أنجزت المجموعة ${groupIndex + 1} بنتيجة ${score}/${total} في تطبيق BilQuiz! 🌟 هل تجرؤ على التحدي وحل هذه الألغاز؟ جرب الآن عبر الرابط: https://bilquiz1.com`;
+    const shareText = `🧩 أنجزت المجموعة ${groupIndex + 1} بنتيجة ${score}/${total} في تطبيق BilQuiz! 🌟 هل تجرؤ على التحدي وحل هذه الألغاز؟ جرب الآن عبر الرابط: https://bilquiz1.vercel.app`;
     
     if (navigator.share) {
       try {
         await navigator.share({
           title: "تحدي BilQuiz للألغاز",
           text: shareText,
-          url: "https://bilquiz1.com",
+          url: "https://bilquiz1.vercel.app",
         });
         return;
       } catch (e) {

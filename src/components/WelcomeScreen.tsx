@@ -35,13 +35,13 @@ const WelcomeScreen = ({
   };
 
   const handleShareApp = async () => {
-    const shareText = "🧩 اختبر ذكائك ومرونة عقلك مع تطبيق الألغاز بيلكويز BilQuiz! 🌟 أكثر من 700 لغز وحجاية باللغة العربية. جربه الآن مجاناً: https://bilquiz1.com";
+    const shareText = "🧩 اختبر ذكائك ومرونة عقلك مع تطبيق الألغاز بيلكويز BilQuiz! 🌟 أكثر من 700 لغز وحجاية باللغة العربية. جربه الآن مجاناً: https://bilquiz1.vercel.app";
     if (navigator.share) {
       try {
         await navigator.share({
           title: "BilQuiz - لعبة الألغاز والذكاء",
           text: shareText,
-          url: "https://bilquiz1.com",
+          url: "https://bilquiz1.vercel.app",
         });
         return;
       } catch (e) {}
