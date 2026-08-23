@@ -642,11 +642,12 @@ const Index = () => {
         {/* ── Navbar ── */}
         <nav className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 sm:py-4 border-b border-white/5">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div
-              className="h-10 w-10 rounded-xl overflow-hidden cursor-pointer flex-shrink-0"
-              onClick={() => appState !== "welcome" && setAppState("groupSelect")}
-            >
+          <div
+            className="flex items-center gap-3 cursor-pointer group"
+            onClick={() => setAppState("welcome")}
+            title="العودة إلى الشاشة الرئيسية"
+          >
+            <div className="h-10 w-10 rounded-xl overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
               <Image
                 src="/logo.jpeg"
                 alt="BilQuiz Logo"
@@ -656,7 +657,7 @@ const Index = () => {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="text-white font-bold text-lg hidden sm:block">BilQuiz</span>
+            <span className="text-white font-bold text-lg hidden sm:block group-hover:text-emerald-400 transition-colors">BilQuiz</span>
           </div>
 
           {/* Center — progress during quiz */}
