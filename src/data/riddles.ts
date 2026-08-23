@@ -8,7 +8,7 @@ export interface LocalizedRiddle {
 
 export interface Riddle {
   id: number;
-  translations: Record<Language, LocalizedRiddle>;
+  translations: Partial<Record<Language, LocalizedRiddle>> & { ar: LocalizedRiddle };
 }
 
 export const languages: { code: Language; label: string; dir: "rtl" | "ltr"; flag: string }[] = [
