@@ -5,6 +5,12 @@ import { getStars } from "@/lib/scoring";
 
 const BATCH_SIZE = 6;
 
+const getDifficulty = (index: number) => {
+  if (index < 5) return { label: "مبتدئ", style: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10" };
+  if (index < 10) return { label: "متوسط", style: "text-amber-400 border-amber-400/30 bg-amber-400/10" };
+  return { label: "صعب", style: "text-rose-400 border-rose-400/30 bg-rose-400/10" };
+};
+
 export interface GroupInfo {
   index: number;
   label: string;
@@ -91,8 +97,15 @@ const GroupSelect = ({ groups, onSelectGroup, dir = "rtl" }: GroupSelectProps) =
                 )}
               </div>
 
-              <p className="text-white font-black text-2xl mb-1">{group.index + 1}</p>
-              <p className="text-white/40 text-xs">{group.questionCount} سؤال</p>
+              <div className="flex flex-col mb-1">
+                <p className="text-white font-black text-2xl">{group.index + 1}</p>
+                <div className="flex items-center gap-2 mt-1 justify-end">
+                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${getDifficulty(group.index).style}`}>
+                      {getDifficulty(group.index).label}
+                   </span>
+                   <p className="text-white/40 text-xs">{group.questionCount} سؤال</p>
+                </div>
+              </div>
 
               {/* Stars */}
               {group.isCompleted && (

@@ -749,8 +749,8 @@ const logicalRiddles = logicalPuzzles.map((puzzle, index) => logicalRiddle(index
 
 const TOTAL_RIDDLES = 700;
 
-const generatedLogicalRiddles = Array.from(
-  { length: TOTAL_RIDDLES - baseRiddles.length - logicalRiddles.length },
+const generatedLogicalRiddles: Riddle[] = Array.from(
+  { length: 95 },
   (_, index) => {
     const seed = index + 1;
     const type = index % 10;
@@ -835,8 +835,112 @@ const generatedLogicalRiddles = Array.from(
   }
 );
 
+const hardRiddles: Riddle[] = [
+  {
+    id: 9001,
+    translations: {
+      ar: {
+        question: "رجل يقف في وسط غرفة مظلمة بالكامل. ليس لديه أي مصدر إضاءة، لا هاتف ولا كبريت ولا مصباح. لكنه يستطيع رؤية كل شيء بوضوح تام. كيف ذلك؟",
+        answers: ["الوقت نهار", "النهار", "في النهار", "بالنهار"],
+        hint: "الظلام ليس في كل وقت.",
+      },
+    }
+  },
+  {
+    id: 9002,
+    translations: {
+      ar: {
+        question: "شيء كلما زاد نقص، ولا يمكن لأحد أن يوقفه. ما هو؟",
+        answers: ["العمر", "عمر الإنسان", "عمر"],
+        hint: "مرتبط بالزمن.",
+      },
+    }
+  },
+  {
+    id: 9003,
+    translations: {
+      ar: {
+        question: "عائلة تتكون من أب، أم، وثلاثة أبناء، وكل ابن له أخت واحدة. كم عدد أفراد العائلة؟",
+        answers: ["6", "ستة", "ستة أفراد"],
+        hint: "الأخت هي نفسها لكل الأبناء.",
+      },
+    }
+  },
+  {
+    id: 9004,
+    translations: {
+      ar: {
+        question: "إذا كان القطار الكهربائي يسير باتجاه الشمال بسرعة 100 كم/ساعة، والرياح تهب نحو الغرب بسرعة 10 كم/ساعة، فأين يتجه الدخان؟",
+        answers: ["لا يوجد دخان", "القطار الكهربائي ليس له دخان", "بدون دخان", "ليس له دخان"],
+        hint: "اقرأ نوع القطار جيداً.",
+      },
+    }
+  },
+  {
+    id: 9005,
+    translations: {
+      ar: {
+        question: "أب كميائي وأم فيزيائية أنجبا طفلاً، فماذا سموه؟ (فكر في الكيمياء)",
+        answers: ["أمين", "امين"],
+        hint: "اسم مركب كيميائي واسم شخص.",
+      },
+    }
+  },
+  {
+    id: 9006,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يجري بلا أرجل ويبكي بلا عيون؟",
+        answers: ["السحاب", "الغيوم", "سحاب"],
+        hint: "موجود في السماء.",
+      },
+    }
+  },
+  {
+    id: 9007,
+    translations: {
+      ar: {
+        question: "شيء تأكل منه ولكنه لا يؤكل. ما هو؟",
+        answers: ["الصحن", "الطبق", "صحن", "طبق"],
+        hint: "يوضع فيه الطعام.",
+      },
+    }
+  },
+  {
+    id: 9008,
+    translations: {
+      ar: {
+        question: "كلمة من 5 حروف، إذا حذفت حرفاً واحداً أصبحت 8. ما هي؟",
+        answers: ["عثمان", "ثمانية"],
+        hint: "فكر في اسم.",
+      },
+    }
+  },
+  {
+    id: 9009,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يحملك وتحمله في نفس الوقت؟",
+        answers: ["الحذاء", "حذاء"],
+        hint: "تلبسه في قدمك.",
+      },
+    }
+  },
+  {
+    id: 9010,
+    translations: {
+      ar: {
+        question: "لديك وعاء يتسع لـ 5 لترات ووعاء يتسع لـ 3 لترات. كم عدد الخطوات التي تحتاجها على الأقل لتحصل على 4 لترات بالظبط إذا كان الماء متوفراً بلا حدود؟",
+        answers: ["6", "ستة", "ست خطوات", "6 خطوات"],
+        hint: "املأ الـ 5، أفرغ في 3، يبقى 2، أفرغ 3، ضع 2 في 3، املأ 5، أفرغ في 3، يتبقى 4.",
+      },
+    }
+  }
+];
+
 export const riddles: Riddle[] = [
   ...baseRiddles,
   ...logicalRiddles,
   ...generatedLogicalRiddles,
+  ...hardRiddles,
 ];
