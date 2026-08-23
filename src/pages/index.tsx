@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import confetti from "canvas-confetti";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -307,6 +308,15 @@ const Index = () => {
       });
       setGroupScore(score);
       setAppState("groupResult");
+
+      if (score >= MIN_SCORE_TO_UNLOCK_GROUP) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#34d399', '#fbbf24', '#818cf8']
+        });
+      }
     },
     [currentGroupIndex, checkAndUnlockAchievements, setProgress]
   );

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Gift, X, Coins, Calendar, Sparkles } from "lucide-react";
 import { DAILY_REWARDS } from "@/data/achievements";
+import confetti from "canvas-confetti";
 
 interface DailyRewardModalProps {
   open: boolean;
@@ -99,7 +100,17 @@ const DailyRewardModal = ({ open, streak, lastClaimedDay, onClaim, onClose }: Da
                 {currentDayNumber === 7 && " 🎉"}
               </p>
               <button
-                onClick={() => canClaimToday && onClaim(DAILY_REWARDS[todayIndex].coins, currentDayNumber)}
+                onClick={() => {
+                  if (canClaimToday) {
+                    onClaim(DAILY_REWARDS[todayIndex].coins, currentDayNumber);
+                    confetti({
+                      particleCount: 80,
+                      spread: 60,
+                      origin: { y: 0.7 },
+                      colors: ['#fbbf24', '#f59e0b', '#d97706'],
+                    });
+                  }
+                }}
                 disabled={!canClaimToday}
                 className={`mt-4 w-full rounded-2xl py-3.5 font-black flex items-center justify-center gap-2 transition-all ${
                   canClaimToday
