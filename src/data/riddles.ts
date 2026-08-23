@@ -519,6 +519,131 @@ const baseRiddles: Riddle[] = [
       },
     },
   },
+  {
+    id: 26,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يحمل طعامه فوق رأسه، وإذا مشى أكل منه وإذا سكن غطى رأسه ونام؟",
+        answers: ["قلم الحبر", "القلم", "قلم"],
+        hint: "أداة كتابة كلاسيكية",
+      },
+      en: {
+        question: "What carries its food on its head, eats when it walks, and covers its head to sleep?",
+        answers: ["fountain pen", "pen", "a pen"],
+        hint: "A classic writing instrument",
+      },
+      fr: {
+        question: "Qu'est-ce qui porte sa nourriture sur sa tête, mange quand il marche, et couvre sa tête pour dormir ?",
+        answers: ["stylo plume", "stylo", "un stylo"],
+        hint: "Un instrument d'écriture classique",
+      },
+      es: {
+        question: "¿Qué lleva su comida en la cabeza, come cuando camina y se cubre la cabeza para dormir?",
+        answers: ["pluma", "bolígrafo", "un bolígrafo"],
+        hint: "Un instrumento de escritura clásico",
+      },
+    },
+  },
+  {
+    id: 27,
+    translations: {
+      ar: {
+        question: "له رقبة وليس له رأس، وله ذراعان وليس له يدان. ما هو؟",
+        answers: ["القميص", "قميص"],
+        hint: "نوع من الملابس",
+      },
+      en: {
+        question: "It has a neck but no head, and two arms but no hands. What is it?",
+        answers: ["shirt", "a shirt"],
+        hint: "An item of clothing",
+      },
+      fr: {
+        question: "Il a un cou mais pas de tête, et deux bras mais pas de mains. Que suis-je ?",
+        answers: ["chemise", "une chemise"],
+        hint: "Un vêtement",
+      },
+      es: {
+        question: "Tiene cuello pero no cabeza, y dos brazos pero no manos. ¿Qué es?",
+        answers: ["camisa", "una camisa"],
+        hint: "Una prenda de vestir",
+      },
+    },
+  },
+  {
+    id: 28,
+    translations: {
+      ar: {
+        question: "أنا دائماً جائع ويجب أن يتم إطعامي دائماً، فالإصبع الذي ألمسه سيتحول إلى اللون الأحمر. ما أنا؟",
+        answers: ["النار", "نار"],
+        hint: "الماء عدوها",
+      },
+      en: {
+        question: "I am always hungry and must always be fed, the finger I touch will soon turn red. What am I?",
+        answers: ["fire", "the fire"],
+        hint: "Water is its enemy",
+      },
+      fr: {
+        question: "J'ai toujours faim et je dois toujours être nourri, le doigt que je touche devient vite rouge. Que suis-je ?",
+        answers: ["feu", "le feu"],
+        hint: "L'eau est son ennemi",
+      },
+      es: {
+        question: "Siempre tengo hambre y siempre debo ser alimentado, el dedo que toco pronto se pondrá rojo. ¿Qué soy?",
+        answers: ["fuego", "el fuego"],
+        hint: "El agua es su enemigo",
+      },
+    },
+  },
+  {
+    id: 29,
+    translations: {
+      ar: {
+        question: "أنا خفيف كالريشة، لكن حتى أقوى رجل لا يستطيع حبسي لأكثر من دقائق معدودة. ما أنا؟",
+        answers: ["النفس", "نفس", "الأنفاس"],
+        hint: "تحتاجه لتبقى حياً",
+      },
+      en: {
+        question: "I am as light as a feather, yet the strongest man cannot hold me for much more than a minute. What am I?",
+        answers: ["breath", "my breath"],
+        hint: "You need it to stay alive",
+      },
+      fr: {
+        question: "Je suis léger comme une plume, pourtant l'homme le plus fort ne peut me retenir plus d'une minute. Que suis-je ?",
+        answers: ["souffle", "la respiration"],
+        hint: "Tu en as besoin pour rester en vie",
+      },
+      es: {
+        question: "Soy tan ligero como una pluma, pero el hombre más fuerte no puede sostenerme por mucho más de un minuto. ¿Qué soy?",
+        answers: ["aliento", "respiración"],
+        hint: "Lo necesitas para mantenerte con vida",
+      },
+    },
+  },
+  {
+    id: 30,
+    translations: {
+      ar: {
+        question: "ما هو الشيء الذي يحمل طعامه في بطنه، ويغني في الصباح؟",
+        answers: ["ابريق الشاي", "إبريق الشاي", "البراد", "براد"],
+        hint: "يستخدم لتحضير مشروب ساخن",
+      },
+      en: {
+        question: "What holds its food in its belly and sings in the morning?",
+        answers: ["teapot", "a teapot", "kettle"],
+        hint: "Used to make a hot drink",
+      },
+      fr: {
+        question: "Qu'est-ce qui garde sa nourriture dans son ventre et chante le matin ?",
+        answers: ["théière", "une théière", "bouilloire"],
+        hint: "Utilisée pour préparer une boisson chaude",
+      },
+      es: {
+        question: "¿Qué guarda su comida en su vientre y canta por la mañana?",
+        answers: ["tetera", "una tetera", "hervidor"],
+        hint: "Se utiliza para hacer una bebida caliente",
+      },
+    },
+  },
 ];
 
 const ltrNumber = (value: number | string) => `\u2066${value}\u2069`;

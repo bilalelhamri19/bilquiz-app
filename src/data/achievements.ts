@@ -98,7 +98,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "coins_500",
     icon: "💰",
-    title: "صائ الذهب",
+    title: "صائد الذهب",
     description: "جمع 500 قطعة ذهب",
     goal: 500,
     type: "coins_earned",

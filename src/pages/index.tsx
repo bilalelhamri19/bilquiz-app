@@ -27,279 +27,47 @@ import AchievementsModal from "@/components/AchievementsModal";
 import StatsModal from "@/components/StatsModal";
 import AchievementToast from "@/components/AchievementToast";
 import { SiteFooter } from "@/components/SiteLayout";
-import { riddles } from "@/data/riddles";
+import { riddles, languages, Language } from "@/data/riddles";
 import { ui } from "@/data/i18n";
 import { ACHIEVEMENTS, Achievement } from "@/data/achievements";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
 
-// ─── Config ────────────────────────────────────────────────────────────────
-const QUESTIONS_PER_GROUP = 10;
-const MIN_SCORE_TO_UNLOCK_GROUP = 6;
-const STORAGE_KEY = "bilquiz_progress";
-const THEME_STORAGE_KEY = "bilquiz_theme";
-const COINS_PER_CORRECT_ANSWER = 5;
-
-// Split riddles into groups of 10
-const allGroups = Array.from(
-  { length: Math.ceil(riddles.length / QUESTIONS_PER_GROUP) },
-  (_, i) => riddles.slice(i * QUESTIONS_PER_GROUP, (i + 1) * QUESTIONS_PER_GROUP)
-);
-
-// ─── Types ─────────────────────────────────────────────────────────────────
-type AppState = "welcome" | "groupSelect" | "quiz" | "groupResult";
-
-interface Progress {
-  unlockedGroups: number[];
-  completedGroups: Record<number, number>;
-  inProgressGroups: Record<number, GroupSession>;
-  coins: number;
-  lastGroupIndex: number;
-  // Extended stats
-  totalCoinsEarned: number;
-  riddlesSolved: number;
-  hintsUsed: number;
-  perfectGroups: number;
-  sessionsPlayed: number;
-  unlockedAchievements: string[];
-  streak: number;
-  lastPlayedDate: string | null;
-  lastClaimedDailyRewardDay: number | null;
-  lastClaimedDailyRewardDate: string | null;
-}
-
-interface GroupSession {
-  resolvedQuestionIndexes: number[];
-  score: number;
-  activeQuestionIndex: number;
-}
-
-const DEFAULT_PROGRESS: Progress = {
-  unlockedGroups: [0],
-  completedGroups: {},
-  inProgressGroups: {},
-  coins: 0,
-  lastGroupIndex: 0,
-  totalCoinsEarned: 0,
-  riddlesSolved: 0,
-  hintsUsed: 0,
-  perfectGroups: 0,
-  sessionsPlayed: 0,
-  unlockedAchievements: [],
-  streak: 0,
-  lastPlayedDate: null,
-  lastClaimedDailyRewardDay: null,
-  lastClaimedDailyRewardDate: null,
-};
-
-const todayStr = () => new Date().toISOString().slice(0, 10);
-
-const isYesterday = (dateStr: string): boolean => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  return dateStr === yesterday.toISOString().slice(0, 10);
-};
-
-const loadProgress = (): Progress => {
-  if (typeof window === "undefined") return DEFAULT_PROGRESS;
-
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const saved = JSON.parse(raw) as Partial<Progress>;
-      const completedGroups = Object.fromEntries(
-        Object.entries(saved.completedGroups ?? {}).filter(([index, score]) => {
-          const groupIndex = Number(index);
-          const questionCount = allGroups[groupIndex]?.length;
-          return (
-            Number.isInteger(groupIndex) &&
-            typeof score === "number" &&
-            Number.isInteger(score) &&
-            score >= MIN_SCORE_TO_UNLOCK_GROUP &&
-            score <= (questionCount ?? QUESTIONS_PER_GROUP)
-          );
-        })
-      ) as Record<number, number>;
-
-      const inProgressGroups = Object.fromEntries(
-        Object.entries(saved.inProgressGroups ?? {}).flatMap(([index, session]) => {
-          const groupIndex = Number(index);
-          const questionCount = allGroups[groupIndex]?.length ?? QUESTIONS_PER_GROUP;
-          const resolvedQuestionIndexes = Array.isArray(session?.resolvedQuestionIndexes)
-            ? [...new Set(session.resolvedQuestionIndexes)].filter(
-                (questionIndex): questionIndex is number =>
-                  Number.isInteger(questionIndex) &&
-                  questionIndex >= 0 &&
-                  questionIndex < questionCount
-              )
-            : [];
-
-          const isValid =
-            Number.isInteger(groupIndex) &&
-            resolvedQuestionIndexes.length > 0 &&
-            resolvedQuestionIndexes.length < questionCount &&
-            typeof session?.score === "number" &&
-            Number.isInteger(session.score) &&
-            session.score >= 0 &&
-            session.score <= resolvedQuestionIndexes.length &&
-            Number.isInteger(session.activeQuestionIndex) &&
-            session.activeQuestionIndex >= 0 &&
-            session.activeQuestionIndex < questionCount &&
-            !resolvedQuestionIndexes.includes(session.activeQuestionIndex);
-
-          return isValid
-            ? [
-                [
-                  groupIndex,
-                  {
-                    resolvedQuestionIndexes,
-                    score: session.score,
-                    activeQuestionIndex: session.activeQuestionIndex,
-                  },
-                ],
-              ]
-            : [];
-        })
-      ) as Record<number, GroupSession>;
-
-      const unlockedGroups = [0];
-      while (completedGroups[unlockedGroups.length - 1] !== undefined) {
-        unlockedGroups.push(unlockedGroups.length);
-      }
-
-      const safeNum = (x: any, fallback = 0) =>
-        typeof x === "number" && Number.isFinite(x) ? Math.max(0, Math.floor(x)) : fallback;
-
-      return {
-        unlockedGroups,
-        completedGroups,
-        inProgressGroups,
-        coins: safeNum(saved.coins),
-        lastGroupIndex: Math.min(
-          Number.isInteger(saved.lastGroupIndex) && saved.lastGroupIndex! >= 0
-            ? saved.lastGroupIndex!
-            : 0,
-          Math.max(0, unlockedGroups.length - 1)
-        ),
-        totalCoinsEarned: safeNum(saved.totalCoinsEarned),
-        riddlesSolved: safeNum(saved.riddlesSolved),
-        hintsUsed: safeNum(saved.hintsUsed),
-        perfectGroups: safeNum(saved.perfectGroups),
-        sessionsPlayed: safeNum(saved.sessionsPlayed),
-        unlockedAchievements: Array.isArray(saved.unlockedAchievements)
-          ? saved.unlockedAchievements.filter((x): x is string => typeof x === "string")
-          : [],
-        streak: safeNum(saved.streak),
-        lastPlayedDate:
-          typeof saved.lastPlayedDate === "string" ? saved.lastPlayedDate : null,
-        lastClaimedDailyRewardDay:
-          typeof saved.lastClaimedDailyRewardDay === "number"
-            ? saved.lastClaimedDailyRewardDay
-            : null,
-        lastClaimedDailyRewardDate:
-          typeof saved.lastClaimedDailyRewardDate === "string"
-            ? saved.lastClaimedDailyRewardDate
-            : null,
-      };
-    }
-  } catch {}
-  return { ...DEFAULT_PROGRESS };
-};
-
-const saveProgress = (p: Progress) => {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
-  } catch {}
-};
-
-// ─── Achievement helpers ───────────────────────────────────────────────────
-const getAchievementStats = (p: Progress) => ({
-  riddlesSolved: p.riddlesSolved,
-  perfectGroups: p.perfectGroups,
-  groupsUnlocked: p.unlockedGroups.length,
-  coinsEarned: p.totalCoinsEarned,
-  streak: p.streak,
-  hintsUsed: p.hintsUsed,
-  totalStars: computeTotalStars(p),
-});
-
-const computeTotalStars = (p: Progress): number => {
-  let stars = 0;
-  for (const score of Object.values(p.completedGroups)) {
-    const pct = (score / QUESTIONS_PER_GROUP) * 100;
-    if (pct >= 90) stars += 3;
-    else if (pct >= 60) stars += 2;
-    else if (pct >= 30) stars += 1;
-  }
-  return stars;
-};
-
-const getNewAchievements = (
-  current: Progress,
-  alreadyUnlocked: Set<string>
-): Achievement[] => {
-  const stats = getAchievementStats(current);
-  const result: Achievement[] = [];
-  for (const ach of ACHIEVEMENTS) {
-    if (alreadyUnlocked.has(ach.id)) continue;
-    let v: number;
-    switch (ach.type) {
-      case "riddles_solved": v = stats.riddlesSolved; break;
-      case "perfect_groups": v = stats.perfectGroups; break;
-      case "groups_unlocked": v = stats.groupsUnlocked; break;
-      case "coins_earned": v = stats.coinsEarned; break;
-      case "streak": v = stats.streak; break;
-      case "hints_used": v = stats.hintsUsed; break;
-      case "total_stars": v = stats.totalStars; break;
-      default: v = 0;
-    }
-    if (v >= ach.goal) result.push(ach);
-  }
-  return result;
-};
-
-// ─── Rank system ───────────────────────────────────────────────────────────
-const RANKS: { title: string; threshold: number }[] = [
-  { title: "مبتدئ", threshold: 0 },
-  { title: "ذكي", threshold: 15 },
-  { title: "محترف", threshold: 50 },
-  { title: "عبقري", threshold: 110 },
-  { title: "أسطورة الألغاز", threshold: 180 },
-];
-
-const getRank = (p: Progress) => {
-  const stars = computeTotalStars(p);
-  let rankIndex = 0;
-  for (let i = 0; i < RANKS.length; i++) {
-    if (stars >= RANKS[i].threshold) rankIndex = i;
-  }
-  const current = RANKS[rankIndex];
-  const next = RANKS[rankIndex + 1];
-  const progressPct = next
-    ? Math.max(
-        0,
-        Math.min(100, Math.round(((stars - current.threshold) / (next.threshold - current.threshold)) * 100))
-      )
-    : 100;
-  return { title: current.title, progress: progressPct };
-};
+import { useLanguage } from "@/hooks/game/useLanguage";
+import { useProgress } from "@/hooks/game/useProgress";
+import { useAchievements } from "@/hooks/game/useAchievements";
+import { getRank } from "@/lib/ranks";
+import { allGroups, totalGroups, QUESTIONS_PER_GROUP, MIN_SCORE_TO_UNLOCK_GROUP, THEME_STORAGE_KEY, COINS_PER_CORRECT_ANSWER } from "@/lib/game-config";
+import { AppState, GroupSession, Progress } from "@/types/game";
 
 // ─── Component ─────────────────────────────────────────────────────────────
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("welcome");
-  const [progress, setProgress] = useState<Progress>({ ...DEFAULT_PROGRESS });
-  const [hasMounted, setHasMounted] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLightMode, setIsLightMode] = useState(false);
 
-  const [isDailyRewardOpen, setIsDailyRewardOpen] = useState(false);
+  const {
+    progress,
+    setProgress,
+    hasMounted,
+    isDailyRewardOpen,
+    setIsDailyRewardOpen,
+    resetProgress: hookResetProgress,
+    todayStr,
+  } = useProgress();
+
+  const { language, changeLanguage, dir, t } = useLanguage();
+
+  const {
+    achievementToast,
+    isAchievementToastOpen,
+    setIsAchievementToastOpen,
+    checkAndUnlockAchievements,
+    getAchievementStats,
+  } = useAchievements();
+
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
-  const [achievementToast, setAchievementToast] = useState<Achievement | null>(null);
-  const [isAchievementToastOpen, setIsAchievementToastOpen] = useState(false);
 
   // Current session
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
@@ -308,65 +76,18 @@ const Index = () => {
   const [resolvedQuestions, setResolvedQuestions] = useState<Set<number>>(new Set());
   const [isQuestionTransitioning, setIsQuestionTransitioning] = useState(false);
 
-  const language: "ar" = "ar";
-  const dir = "rtl";
-  const t = ui.ar;
-
   const currentGroupQuestions = allGroups[currentGroupIndex] ?? [];
   const currentRiddle = currentGroupQuestions[questionInGroup];
-  const totalGroups = allGroups.length;
-  const totalRiddles = allGroups.reduce((sum, g) => sum + g.length, 0);
   const maxStars = totalGroups * 3;
-
-  // ── Persistence ────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!hasMounted) return;
-    saveProgress(progress);
-  }, [progress, hasMounted]);
+  const totalRiddles = allGroups.reduce((sum, g) => sum + g.length, 0);
 
   // ── Mount / initialize preferences ─────────────────────────────────────
   useEffect(() => {
-    const loadedProgress = loadProgress();
-
-    // Session counter
-    const today = todayStr();
-    if (loadedProgress.lastPlayedDate !== today) {
-      loadedProgress.sessionsPlayed = Math.max(0, loadedProgress.sessionsPlayed) + 1;
-
-      if (!loadedProgress.lastPlayedDate || isYesterday(loadedProgress.lastPlayedDate)) {
-        loadedProgress.streak = Math.max(0, loadedProgress.streak) + 1;
-      } else if (loadedProgress.lastPlayedDate !== today) {
-        loadedProgress.streak = 1;
-      }
-      loadedProgress.lastPlayedDate = today;
-    }
-
-    // Reset daily reward claim after 7-day cycle (new day resets position)
-    const claimedDate = loadedProgress.lastClaimedDailyRewardDate;
-    const last7Days = new Date();
-    last7Days.setDate(last7Days.getDate() - 7);
-    if (claimedDate && new Date(claimedDate) < last7Days) {
-      loadedProgress.lastClaimedDailyRewardDay = null;
-      loadedProgress.lastClaimedDailyRewardDate = null;
-    }
-
-    setProgress(loadedProgress);
-
-    // Theme
     try {
       const lightMode = localStorage.getItem(THEME_STORAGE_KEY) === "light";
       setIsLightMode(lightMode);
       document.documentElement.classList.toggle("theme-light", lightMode);
     } catch {}
-
-    setHasMounted(true);
-
-    // Open daily rewards if not claimed today
-    const claimedToday = loadedProgress.lastClaimedDailyRewardDate === today;
-    if (!claimedToday) {
-      const t = window.setTimeout(() => setIsDailyRewardOpen(true), 900);
-      return () => window.clearTimeout(t);
-    }
   }, []);
 
   // ── Group info builder ─────────────────────────────────────────────────
@@ -379,26 +100,6 @@ const Index = () => {
     score: progress.completedGroups[i],
   }));
 
-  // ── Achievement unlocker ───────────────────────────────────────────────
-  const showAchievement = useCallback((ach: Achievement) => {
-    setAchievementToast(ach);
-    setIsAchievementToastOpen(true);
-    window.setTimeout(() => setIsAchievementToastOpen(false), 4200);
-  }, []);
-
-  const checkAndUnlockAchievements = useCallback((updatedProgress: Progress): Progress => {
-    const unlocked = new Set(updatedProgress.unlockedAchievements);
-    const newAchievements = getNewAchievements(updatedProgress, unlocked);
-    if (newAchievements.length === 0) return updatedProgress;
-    const allUnlocked = [...updatedProgress.unlockedAchievements];
-    for (const ach of newAchievements) {
-      if (!allUnlocked.includes(ach.id)) {
-        allUnlocked.push(ach.id);
-        showAchievement(ach);
-      }
-    }
-    return { ...updatedProgress, unlockedAchievements: allUnlocked };
-  }, [showAchievement]);
 
   // ── Daily reward claimer ───────────────────────────────────────────────
   const claimDailyReward = (coins: number, day: number) => {
@@ -607,23 +308,19 @@ const Index = () => {
       setGroupScore(score);
       setAppState("groupResult");
     },
-    [currentGroupIndex, totalGroups, checkAndUnlockAchievements]
+    [currentGroupIndex, checkAndUnlockAchievements, setProgress]
   );
 
   const progressPercent = Math.round(
     (resolvedQuestions.size / currentGroupQuestions.length) * 100
   );
 
-  const resetProgress = () => {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      setProgress({ ...DEFAULT_PROGRESS });
-      toast({
-        title: "تم مسح التقدم",
-        description: "تمت إعادة ضبط البيانات. ألغاز جديدة تنتظرك!",
-      });
-    } catch {}
+  const handleResetProgress = () => {
+    hookResetProgress();
+    toast({
+      title: "تم مسح التقدم",
+      description: "تمت إعادة ضبط البيانات. ألغاز جديدة تنتظرك!",
+    });
     setIsSettingsOpen(false);
   };
 
@@ -950,6 +647,27 @@ const Index = () => {
                 </span>
               </button>
 
+              {/* Language Selector */}
+              <div className="mt-4">
+                <h3 className="text-sm font-bold text-white mb-2">{t.chooseLanguage || "اختر اللغة"}</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`flex items-center justify-center gap-2 p-2 rounded-xl text-sm font-bold border transition-colors ${
+                        language === lang.code
+                          ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+                          : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"
+                      }`}
+                    >
+                      <span className="text-lg">{lang.flag}</span>
+                      <span>{lang.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Quick Modals */}
               <div className="mt-5 grid grid-cols-2 gap-2">
                 <button
@@ -1042,7 +760,7 @@ const Index = () => {
               <div className="mt-8 border-t border-white/10 pt-5 space-y-2">
                 <button
                   type="button"
-                  onClick={resetProgress}
+                  onClick={handleResetProgress}
                   className="w-full flex items-center justify-center gap-2 rounded-2xl border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 text-rose-300 px-4 py-3 font-black text-sm transition"
                 >
                   <RefreshCw size={16} /> إعادة ضبط التقدم
