@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Home } from "lucide-react";
+
 import { ReactNode } from "react";
 
 interface SiteLayoutProps {
@@ -30,11 +30,7 @@ export const SiteFooter = () => (
 const SiteLayout = ({ children, pageTitle }: SiteLayoutProps) => (
   <div dir="rtl" className="bg-app flex min-h-screen flex-col overflow-hidden">
     <header className="border-b border-white/5 px-4 py-3 sm:px-6 sm:py-4">
-      <div className="mx-auto flex max-w-5xl items-center justify-between">
-        <Link href="/" className="btn-ghost-dark inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-white/70 hover:text-white">
-          <Home size={18} /> الرئيسية
-        </Link>
-
+      <div className="mx-auto flex max-w-5xl items-center justify-start">
         <Link href="/" className="group">
           <div className="h-10 w-10 overflow-hidden rounded-xl group-hover:scale-105 transition-transform">
             <Image src="/logo.jpeg" alt="BilQuiz" width={40} height={40} priority className="h-full w-full object-cover" />
