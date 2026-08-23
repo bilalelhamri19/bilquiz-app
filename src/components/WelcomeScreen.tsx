@@ -35,7 +35,7 @@ const WelcomeScreen = ({
   };
 
   const handleShareApp = async () => {
-    const shareText = "🧩 اختبر ذكائك ومرونة عقلك مع تطبيق الألغاز بيلكويز BilQuiz! 🌟 أكثر من 700 لغز وحجاية بـ 4 لغات. جربه الآن مجاناً: https://bilquiz1.com";
+    const shareText = "🧩 اختبر ذكائك ومرونة عقلك مع تطبيق الألغاز بيلكويز BilQuiz! 🌟 أكثر من 700 لغز وحجاية باللغة العربية. جربه الآن مجاناً: https://bilquiz1.com";
     if (navigator.share) {
       try {
         await navigator.share({
