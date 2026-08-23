@@ -177,12 +177,6 @@ export const useProgress = () => {
 
     setProgress(loadedProgress);
     setHasMounted(true);
-
-    const claimedToday = loadedProgress.lastClaimedDailyRewardDate === today;
-    if (!claimedToday) {
-      const t = window.setTimeout(() => setIsDailyRewardOpen(true), 900);
-      return () => window.clearTimeout(t);
-    }
   }, []);
 
   const resetProgress = () => {
